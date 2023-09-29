@@ -1,0 +1,30 @@
+/* ////////////////////////////////////////////////////////// ALAPOK //////////////////////////////////////////////////////////*/
+
+body {
+    background: linear-gradient(150deg, rgba(218,247,166,1) 0%, rgba(255,195,0,1) 100%);
+    background-size: cover; /* A háttér méretét illeszti az ablakhoz */
+    background-attachment: fixed; /* A háttér fixen marad az ablakban */
+}
+
+p {
+    font-family: "Century Gothic", sans-serif;
+    font-size: 14px;
+    color:#C70039
+}
+
+
+h1, h2, h3 {
+    color: #900C3F; 
+}
+
+h1{
+    font-size: 24px;
+}
+
+h2{
+    font-size: 20px;
+}
+
+h1{
+    font-size: 18px;
+}
