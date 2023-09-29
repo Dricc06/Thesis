@@ -42,3 +42,47 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 ?>
+
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <!--- Az itt felhasznált avatarképek a https://usersinsights.com/user-avatar-icons/ oldalról származnak, 
+            Creative Commons licensz alatt állnak. (https://creativecommons.org/licenses/by/3.0/) -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avatar módosítása</title>
+    <link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+    <div class="container">
+        <h2>Avatar módosítása</h2>
+        <form action="avatar_modositasa.php" method="POST">
+            <div class="gallery">
+                <?php
+                // Avatarképek listázása
+                $avatarFolder = "avatars/"; // Az avatarképek mappája
+                $avatarFiles = scandir($avatarFolder); // Mappában lévő fájlok visszaadása
+
+                foreach ($avatarFiles as $file) { // Végigmegyünk a fájlokon
+                    if ($file != "." && $file != "..") {
+                        echo "<img class='gallery-item' src='$avatarFolder$file' alt='$file' onclick=\"selectAvatar('$file')\">"; // kattinthatóvá tesszük a képeket
+                    }
+                }
+                ?>
+            </div>
+            <br>  <br> <br>
+            <input type="hidden" id="selectedAvatar" name="avatar" value="">
+            <button type="submit">Mentés</button>
+        </form>
+    </div>
+
+    <script>
+        // Kiválasztott avatarkép tárolása - JavaScript
+        function selectAvatar(avatarName) {
+            document.getElementById('selectedAvatar').value = avatarName;
+        }
+
+    </script>
+</body>
+</html>
