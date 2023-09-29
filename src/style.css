@@ -41,3 +41,45 @@ h1{
     width: 100%; 
 }
 
+/* ////////////////////////////////////////////////////////// TÁBLÁZAT ////////////////////////////////////////////////////////// */
+
+.main-table {
+    width: 80%;
+    margin: 0 auto;
+    text-align: center;
+    margin: 80px auto 0;
+    border: none;
+}
+
+td {
+    padding: 10px;
+}
+
+.menu {
+    background-color: #C70039;
+    color: white;
+}
+
+.separator {
+    background-color: transparent;
+}
+
+.content {
+    background-color: white;
+}
+
+.footer {
+    background-color: #C70039;
+    color: white;
+    color: #FFC300 
+}
+
+.footer a {
+    text-decoration: none;
+    color: white;
+}
+
+.footer a:hover {
+    text-decoration: none;
+    color: red;
+}
