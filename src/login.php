@@ -41,7 +41,8 @@
     </div>
 </body>
 </html>
-
+                    
+<?php
 // Adatbázis kapcsolódás
 $servername = "localhost";
 $username = "Admin";
@@ -88,3 +89,69 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 $conn->close();
 ?>
+
+<style>
+html, body {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: radial-gradient(circle at bottom, #FF5733 , #581845);
+    background-size: cover; /* A háttér méretét illeszti az ablakhoz */
+    background-attachment: fixed; /* A háttér fixen marad az ablakban */
+}
+
+.login-container {
+    background-color: rgba(255, 255, 255, 0.5);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    width: 400px;
+}
+
+h2 {
+    text-align: center;
+    color: #C70039;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #900C3F;
+}
+
+input[type="text"],
+input[type="password"],
+select {
+    width: 80%;
+    padding: 10px;
+    border: 1px solid #581845;
+    border-radius: 5px;
+}
+
+button {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background-color: #FF5733;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #C70039;
+}
+
+
+</style>
+
+<link href="styles.css" rel="stylesheet" />
