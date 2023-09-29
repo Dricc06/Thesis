@@ -83,3 +83,33 @@ td {
     text-decoration: none;
     color: red;
 }
+
+/* ////////////////////////////////////////////////////////// NAVIGATION BAR ////////////////////////////////////////////////////////// */
+
+.nav-menu {
+    display: flex;
+    justify-content: space-between; /* A menüpontokat az élekhez igazítja */
+    background-color: #C70039;
+    color: white;
+}
+
+.left-menu {
+    margin-right: auto; /* Balra igazítás a flexbox segítségével */
+}
+
+.right-menu {
+    margin-left: auto; /* Jobbra igazítás a flexbox segítségével */
+}
+
+.left-menu a{
+    color: white;
+    text-decoration: none; /* Nincs aláhúzás */
+}
+
+.right-menu a{
+    color: white;
+    text-decoration: none; /* Nincs aláhúzás */
+}
+
+.left-menu a:hover, .right-menu a:hover {
+    color: #581845; /* Változtasd meg a szövegszínt az egér fölé húzásnál */
