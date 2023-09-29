@@ -41,3 +41,50 @@
     </div>
 </body>
 </html>
+
+// Adatbázis kapcsolódás
+$servername = "localhost";
+$username = "Admin";
+$password = "_K*uqlR2qRzexuzw";
+$dbname = "SZD_jatekositas";
+
+$conn = new mysqli($servername, $username, $password, $dbname);
+if ($conn->connect_error) {
+    die("Hiba a kapcsolódás során: " . $conn->connect_error);
+}
+
+// A formból érkező adatok feldolgozása
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $userType = $_POST["user-type"];
+    $username = $_POST["username"];
+    $password = $_POST["password"];
+
+    // Ellenőrzés az adatbázisban
+    $sql = "SELECT * FROM users WHERE neptun_kod = '$username' AND jelszo = '$password' AND user_type = '$userType'";
+    $result = $conn->query($sql);
+
+    if ($result->num_rows == 1) {
+    // Sikeres belépés
+    session_start();
+    $_SESSION["username"] = $username;
+    $_SESSION["user_type"] = $userType;
+
+    // Átirányítás a megfelelő céloldalra
+    if ($userType == "2") {
+        header("Location: fooldal_hallgato.php");
+    } elseif ($userType == "1") {
+        header("Location: fooldal_oktato.php");
+    }
+
+    exit();
+} else {
+    // Belépés sikertelen
+    $_SESSION['error'] = "Hibás felhasználónév, jelszó vagy belépési típus.";
+    header("Location: login.php"); // Átirányítás a bejelentkező oldalra
+    exit();
+}
+
+}
+
+$conn->close();
+?>
