@@ -84,6 +84,38 @@ td {
     color: red;
 }
 
+/* ////////////////////////////////////////////////////////// CONTENT ////////////////////////////////////////////////////////// */
+
+.content h1{
+    font-size: 24px;
+}
+
+.content h2{
+    font-size: 20px;
+    float: left;
+    margin-left: 20px;
+}
+
+.content img{
+    width: 12%;
+    height: 12%;
+    float: left;
+}
+
+.content a{
+    color: #581845;
+    text-decoration: none; /* Nincs aláhúzás */
+}
+
+.content a :hover{
+    background-color: #FF5733;
+    color: red;
+}
+
+.content a :visited{
+    color: black;
+}
+
 /* ////////////////////////////////////////////////////////// NAVIGATION BAR ////////////////////////////////////////////////////////// */
 
 .nav-menu {
