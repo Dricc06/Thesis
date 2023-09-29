@@ -86,3 +86,76 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </script>
 </body>
 </html>
+
+<style>
+html, body {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: radial-gradient(circle at bottom, #FF5733 , #581845);
+    background-size: cover;
+    background-attachment: fixed; /* A háttér fixen marad az ablakban */
+}
+
+.container {
+    background-color: rgba(255, 255, 255, 0.5);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    width: 50%;
+}
+
+h2 {
+    text-align: center;
+    color: #C70039;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #900C3F;
+}
+
+button {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background-color: #FF5733;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #C70039;
+}
+
+.gallery {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+.gallery-item {
+            width: 100px;
+            height: 100px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+.gallery-item:hover {
+            transform: scale(1.1);
+        }
+
+</style>
+
+<link href="styles.css" rel="stylesheet" />
