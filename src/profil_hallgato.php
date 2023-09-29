@@ -47,3 +47,165 @@ if ($result_userdatas->num_rows == 1) {
 }
 
 ?>
+
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hallgatói profil</title>
+    <link href="style.css" rel="stylesheet" />
+    <style>
+        /* Alap stílusok kifejezetten ezen oldal táblázataihoz */
+        table {
+            border-collapse: collapse;
+            margin: 10px;
+        }
+
+        th {
+            background-color: #FF5733;
+            color: white;
+            padding: 10px;
+            
+        }
+
+        /* Táblázatok egymás mellé rendezése */
+        .table-container {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 15%; /* Csökkentett margó */
+        }
+
+        caption {
+            font-weight: bold;
+            font-size: 20px;
+            text-align: left;
+            color: #581845;
+            padding: 5px;
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <table class="main-table">
+        <tr>
+        <td colspan="5" class="banner">
+            <div class="avatar-info">
+                <div class="avatar">
+                    <!-- Az avatar kép megjelenítése -->
+                    <img src="<?php echo $avatar; ?>" alt="Avatar" width="150" height="150">
+
+
+                </div>
+                <div class="user-info">
+                    <div class="neptun-kod">
+                        <!-- A Neptun kód megjelenítése -->
+                        Neptun kód: <?php echo $username; ?>
+                    </div>
+                    <div class="profile-link">
+                        <a href="profil_hallgato.php">Profilom</a>
+                    </div>
+                </div>
+            </div>
+        </td>
+        </tr>
+        <tr>
+            <td colspan="5" class="menu">
+                
+                <div class="nav-menu">
+                    <div class="left-menu"><a href=fooldal_hallgato.php target="_blank">Főoldal</a></div>
+                    <div class="right-menu"><a href=logout.php>Kijelentkezés</a></div>
+                </div>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="5" class="separator">
+                <img src="./elvalaszto.png" alt="Elválasztó kép" class="full-width">
+            </td>
+        </tr>
+        <tr>
+            <td colspan="3" class="content">
+                
+                <h1><?php echo $username ?></h1> <br>
+
+                <div class="table-container">
+                    <!-- Hallgató adatai táblázat -->
+                    <table>
+                        <caption>Hallgató adatai</caption>
+                        <tr>
+                            <th>Név: </th>
+                            <td><?php echo $nev; ?></td>
+                        </tr>
+                        <tr>
+                            <th>Kar: </th>
+                            <td><?php echo $row_userdatas['karNeve']; ?></td>
+                        </tr>
+
+                        <tr>
+                            <th>Szak: </th>
+                            <td><?php echo $szak; ?></td>
+                        </tr>
+                        <tr>
+                            <th>Tagozat: </th>
+                            <td><?php echo $tagozat; ?></td>
+                        </tr>
+                        <tr>
+                            <th><a href=avatar_modositasa.php target="_blank">Avatar módosítása!</a></th>
+                        </tr>
+                       
+
+                    </table>
+
+                    <img src="<?php echo $avatar; ?>" alt="Avatar" width="150" height="150">
+
+
+                    <!-- Trófeák táblázat -->
+                    <table>
+                        <caption>Trófeák</caption>
+                        <tr>
+                            <th>Dátum</th>
+                            <th>Trófea</th>
+                            <th>Leírás</th>
+                        </tr>
+                        <tr>
+                            <td>2023-09-22</td>
+                            <td>Trófea neve</td>
+                            <td>Rövid leírás...</td>
+                        </tr>
+                        <tr>
+                            <td>2023-09-22</td>
+                            <td>Trófea neve</td>
+                            <td>Rövid leírás...</td>
+                        </tr>
+                        <tr>
+                            <td>2023-09-22</td>
+                            <td>Trófea neve</td>
+                            <td>Rövid leírás...</td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td><a href="#">Több...</a></td>
+                        </tr>
+
+                        
+                    </table>
+
+
+                </div> 
+            </td>
+        </tr>
+        <tr>
+            <td colspan="5" class="footer">
+                <a href="https://uni-eszterhazy.hu" target="_blank">Weboldal</a> | <a href="https://www.facebook.com/eszterhazyuniversity/" target="_blank">Facebook</a> | <a href="https://www.instagram.com/unieszterhazy/" target="_blank">Instagram</a>
+                <br><br>
+                Készítette: Gasparovics Adrienn | BGV8GI | Gazdaságinformatikus BA
+            </td>
+        </tr>
+    </table>
+    
+</body>
+</html>
