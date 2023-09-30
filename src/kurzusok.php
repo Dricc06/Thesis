@@ -46,3 +46,68 @@ if ($result->num_rows > 0) {
 
 $conn->close();
 ?>
+
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kurzusaim</title>
+    <link href="style.css" rel="stylesheet" />
+</head>
+<body>
+
+    <table class="main-table">
+        <tr>
+        <td colspan="5" class="banner">
+            <div class="avatar-info">
+                <div class="avatar">
+                    <img src="<?php echo $avatar; ?>" alt="Avatar" width="150" height="150">
+                </div>
+                <div class="user-info">
+                    <div class="neptun-kod">
+                        Neptun kód: <?php echo $username; ?>
+                    </div>
+                    <div class="profile-link">
+                        <a href="profil_oktato.php">Profilom</a>
+                    </div>
+                </div>
+            </div>
+        </td>
+        </tr>
+        <tr>
+            <td colspan="5" class="menu">
+                <div class="nav-menu">
+                    <div class="left-menu"><a href=fooldal_oktato.php target="_blank">Főoldal</a></div>
+                    <div class="left-menu"><a href=kurzusok.php target="_blank">Kurzusaim</a></div>
+                    <div class="right-menu"><a href=logout.php>Kijelentkezés</a></div>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="5" class="separator">
+                <img src="./elvalaszto.png" alt="Elválasztó kép" class="full-width">
+            </td>
+        </tr>
+        <tr>
+            <td colspan="5" class="content">
+                <h1>Kurzusaim</h1>
+                <ul>
+                    <?php foreach ($oktatoKurzusok as $kurzus) : ?>
+                        <li><a href="kurzus_oldal.php?nev=<?= urlencode($kurzus) ?>"><?= $kurzus ?></a></li>
+                    <?php endforeach; ?>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="5" class="footer">
+                <a href="https://uni-eszterhazy.hu" target="_blank">Weboldal</a> | <a href="https://www.facebook.com/eszterhazyuniversity/" target="_blank">Facebook</a> | <a href="https://www.instagram.com/unieszterhazy/" target="_blank">Instagram</a>
+                <br><br>
+                Készítette: Gasparovics Adrienn | BGV8GI | Gazdaságinformatikus BA
+            </td>
+        </tr>
+    </table>
+    
+</body>
+
+</html>
