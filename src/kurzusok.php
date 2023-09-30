@@ -109,5 +109,12 @@ $conn->close();
     </table>
     
 </body>
+    
+<style>
+ul {
+    list-style-type: none;
+    text-align: left;
+}
+</style>
 
 </html>
