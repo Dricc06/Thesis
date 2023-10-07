@@ -1,44 +1,79 @@
 /* ////////////////////////////////////////////////////////// ALAPOK //////////////////////////////////////////////////////////*/
 
+html,
 body {
-    background: linear-gradient(150deg, rgba(218,247,166,1) 0%, rgba(255,195,0,1) 100%);
-    background-size: cover; /* A háttér méretét illeszti az ablakhoz */
-    background-attachment: fixed; /* A háttér fixen marad az ablakban */
+    background: #c9d3d3;
+    background-size: cover;
+    /* A háttér méretét illeszti az ablakhoz */
+    background-attachment: fixed;
+    /* A háttér fixen marad az ablakban */
 }
 
 p {
     font-family: "Century Gothic", sans-serif;
     font-size: 14px;
-    color:#C70039
+    color: #000;
 }
 
 
-h1, h2, h3 {
-    color: #900C3F; 
+
+h1,
+h2,
+h3 {
+    color: #000;
 }
 
-h1{
+h1 {
     font-size: 24px;
 }
 
-h2{
+h2 {
     font-size: 20px;
 }
 
-h1{
+h1 {
     font-size: 18px;
+}
+
+/* ////////////////////////////////////////////////////////// AVATAR ////////////////////////////////////////////////////////// */
+
+.avatar-info {
+    display: flex;
+    align-items: center;
+}
+
+.avatar {
+    margin-right: 10px;
+}
+
+.neptun-kod {
+    color: #800000;
+}
+
+.profile-link a {
+    text-decoration: none;
+    /* Link aláhúzás eltávolítása */
+    color: #fff;
+    /* Link színének beállítása */
+}
+
+.profile-link a:hover {
+    text-decoration: none;
+    color: #ff9100;
+
 }
 
 /* ////////////////////////////////////////////////////////// LEFT ALIGN  ////////////////////////////////////////////////////////// */
 
 .left-align {
-    float: left; /* Balra igazítás */
+    float: left;
+    /* Balra igazítás */
 }
 
 /* ////////////////////////////////////////////////////////// ELVÁLASZTÓ KÉP MÓDOSÍTÁSAI ////////////////////////////////////////////////////////// */
 
 .full-width {
-    width: 100%; 
+    width: 100%;
 }
 
 /* ////////////////////////////////////////////////////////// TÁBLÁZAT ////////////////////////////////////////////////////////// */
@@ -49,6 +84,7 @@ h1{
     text-align: center;
     margin: 80px auto 0;
     border: none;
+
 }
 
 td {
@@ -56,8 +92,9 @@ td {
 }
 
 .menu {
-    background-color: #C70039;
+    background-color: #6a040f;
     color: white;
+    border-radius: 20px;
 }
 
 .separator {
@@ -65,13 +102,16 @@ td {
 }
 
 .content {
-    background-color: white;
+    background-color: rgb(223, 223, 223);
+    border-radius: 20px;
+    border-right: 5px solid rgb(173, 173, 173);
+    border-bottom: 5px solid rgb(173, 173, 173);
 }
 
 .footer {
-    background-color: #C70039;
-    color: white;
-    color: #FFC300 
+    background-color: #6a040f;
+    color: #c0c0c0;
+    border-radius: 20px;
 }
 
 .footer a {
@@ -81,38 +121,39 @@ td {
 
 .footer a:hover {
     text-decoration: none;
-    color: red;
+    color: #ff9100;
 }
 
 /* ////////////////////////////////////////////////////////// CONTENT ////////////////////////////////////////////////////////// */
 
-.content h1{
+.content h1 {
     font-size: 24px;
 }
 
-.content h2{
+.content h2 {
     font-size: 20px;
     float: left;
     margin-left: 20px;
 }
 
-.content img{
+.content img {
     width: 12%;
     height: 12%;
     float: left;
 }
 
-.content a{
-    color: #581845;
-    text-decoration: none; /* Nincs aláhúzás */
+.content a {
+    color: #ff9100;
+    text-decoration: none;
+    /* Nincs aláhúzás */
 }
 
-.content a :hover{
-    background-color: #FF5733;
-    color: red;
+.content a :hover {
+    background-color: #c0c0c0;
+    color: #ff9100;
 }
 
-.content a :visited{
+.content a :visited {
     color: black;
 }
 
@@ -120,28 +161,175 @@ td {
 
 .nav-menu {
     display: flex;
-    justify-content: space-between; /* A menüpontokat az élekhez igazítja */
-    background-color: #C70039;
-    color: white;
+    justify-content: space-between;
+    /* Térköz elosztás */
+    align-items: center;
+    padding: 10px;
 }
 
-.left-menu {
-    margin-right: auto; /* Balra igazítás a flexbox segítségével */
+.left-menu,
+.right-menu {
+    padding: 0 10px;
+    /* Térköz a menüelemek között */
 }
 
 .right-menu {
-    margin-left: auto; /* Jobbra igazítás a flexbox segítségével */
+    margin-left: auto;
+    /* Jobbra igazítja a "Kijelentkezés" gombot */
 }
 
-.left-menu a{
+.nav-menu a {
+    text-decoration: none;
+    /* Törli az aláhúzást a linkekről */
     color: white;
-    text-decoration: none; /* Nincs aláhúzás */
+    /* Szöveg színe */
 }
 
-.right-menu a{
+.left-menu a {
     color: white;
-    text-decoration: none; /* Nincs aláhúzás */
+    text-decoration: none;
+    /* Nincs aláhúzás */
 }
 
-.left-menu a:hover, .right-menu a:hover {
-    color: #581845; /* Változtasd meg a szövegszínt az egér fölé húzásnál */
+.right-menu a {
+    color: white;
+    text-decoration: none;
+    /* Nincs aláhúzás */
+}
+
+.left-menu a:hover,
+.right-menu a:hover {
+    color: #ff9100;
+    /* Változtasd meg a szövegszínt az egér fölé húzásnál */
+}
+
+.left-menu-kurzus ul.kurzusok-lista {
+    display: none;
+}
+
+.left-menu-kurzus:hover ul.kurzusok-lista {
+    display: block;
+}
+
+.main-table {
+    position: relative;
+    z-index: 100000000;
+}
+
+/* ////////////////////////////////////////////////////////// KOCKÁK ////////////////////////////////////////////////////////// */
+
+
+.circles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: 100;
+}
+
+
+.circles li {
+    position: absolute;
+    display: block;
+    list-style: none;
+    width: 20px;
+    height: 20px;
+    background: rgba(73, 6, 6, 0.623);
+    animation: animate 25s linear infinite;
+    bottom: -150px;
+
+}
+
+.circles li:nth-child(1) {
+    left: 25%;
+    width: 80px;
+    height: 80px;
+    animation-delay: 0s;
+}
+
+
+.circles li:nth-child(2) {
+    left: 10%;
+    width: 20px;
+    height: 20px;
+    animation-delay: 2s;
+    animation-duration: 12s;
+}
+
+.circles li:nth-child(3) {
+    left: 70%;
+    width: 20px;
+    height: 20px;
+    animation-delay: 4s;
+}
+
+.circles li:nth-child(4) {
+    left: 40%;
+    width: 60px;
+    height: 60px;
+    animation-delay: 0s;
+    animation-duration: 18s;
+}
+
+.circles li:nth-child(5) {
+    left: 65%;
+    width: 20px;
+    height: 20px;
+    animation-delay: 0s;
+}
+
+.circles li:nth-child(6) {
+    left: 75%;
+    width: 110px;
+    height: 110px;
+    animation-delay: 3s;
+}
+
+.circles li:nth-child(7) {
+    left: 35%;
+    width: 150px;
+    height: 150px;
+    animation-delay: 7s;
+}
+
+.circles li:nth-child(8) {
+    left: 50%;
+    width: 25px;
+    height: 25px;
+    animation-delay: 15s;
+    animation-duration: 45s;
+}
+
+.circles li:nth-child(9) {
+    left: 20%;
+    width: 15px;
+    height: 15px;
+    animation-delay: 2s;
+    animation-duration: 35s;
+}
+
+.circles li:nth-child(10) {
+    left: 85%;
+    width: 150px;
+    height: 150px;
+    animation-delay: 0s;
+    animation-duration: 11s;
+}
+
+@keyframes animate {
+
+    0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 1;
+        border-radius: 0;
+    }
+
+    100% {
+        transform: translateY(-1000px) rotate(720deg);
+        opacity: 0;
+        border-radius: 50%;
+    }
+
+}
