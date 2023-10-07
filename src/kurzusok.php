@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-if(!isset($_SESSION['user_type']) || $_SESSION['user_type'] != "1") {
+if (!isset($_SESSION['user_type']) || $_SESSION['user_type'] != "1") {
     // Ellenőrizze, hogy a felhasználó be van-e jelentkezve és oktató-e
     header("Location: login.php");
     exit();
@@ -20,7 +20,7 @@ if ($conn->connect_error) {
 }
 
 // Felhasználó adatainak lekérdezése
-$username= $_SESSION['username'];
+$username = $_SESSION['username'];
 $sql = "SELECT avatar, neptun_kod FROM users WHERE neptun_kod = '$username'";
 $result = $conn->query($sql);
 
@@ -49,31 +49,33 @@ $conn->close();
 
 <!DOCTYPE html>
 <html lang="hu">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kurzusaim</title>
     <link href="style.css" rel="stylesheet" />
 </head>
+
 <body>
 
     <table class="main-table">
         <tr>
-        <td colspan="5" class="banner">
-            <div class="avatar-info">
-                <div class="avatar">
-                    <img src="<?php echo $avatar; ?>" alt="Avatar" width="150" height="150">
-                </div>
-                <div class="user-info">
-                    <div class="neptun-kod">
-                        Neptun kód: <?php echo $username; ?>
+            <td colspan="5" class="banner">
+                <div class="avatar-info">
+                    <div class="avatar">
+                        <img src="<?php echo $avatar; ?>" alt="Avatar" width="150" height="150">
                     </div>
-                    <div class="profile-link">
-                        <a href="profil_oktato.php">Profilom</a>
+                    <div class="user-info">
+                        <div class="neptun-kod">
+                            Neptun kód: <?php echo $username; ?>
+                        </div>
+                        <div class="profile-link">
+                            <a href="profil_oktato.php">Profilom</a>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </td>
+            </td>
         </tr>
         <tr>
             <td colspan="5" class="menu">
@@ -85,16 +87,16 @@ $conn->close();
             </td>
         </tr>
         <tr>
-            <td colspan="5" class="separator">
+            <!-- <td colspan="5" class="separator">
                 <img src="./elvalaszto.png" alt="Elválasztó kép" class="full-width">
-            </td>
+            </td> -->
         </tr>
         <tr>
             <td colspan="5" class="content">
                 <h1>Kurzusaim</h1>
                 <ul>
                     <?php foreach ($oktatoKurzusok as $kurzus) : ?>
-                        <li><a href="kurzus_oldal.php?nev=<?= urlencode($kurzus) ?>"><?= $kurzus ?></a></li>
+                        <li><a href="tananyag.php?nev=<?= urlencode($kurzus) ?>"><?= $kurzus ?></a></li>
                     <?php endforeach; ?>
                 </ul>
             </td>
@@ -107,14 +109,28 @@ $conn->close();
             </td>
         </tr>
     </table>
-    
+
+    <div class="area">
+        <ul class="circles">
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+        </ul>
+    </div>
 </body>
-    
+
 <style>
-ul {
-    list-style-type: none;
-    text-align: left;
-}
+    ul {
+        list-style-type: none;
+        text-align: left;
+    }
 </style>
 
 </html>

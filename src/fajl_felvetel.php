@@ -108,12 +108,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 <!DOCTYPE html>
 <html lang="hu">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Új fájl feltöltése</title>
     <link href="style.css" rel="stylesheet" />
 </head>
+
 <body>
     <table class="main-table">
         <tr>
@@ -143,9 +145,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </td>
         </tr>
         <tr>
-            <td colspan="5" class="separator">
-                <img src="./elvalaszto.png" alt="Elválasztó kép" class="full-width">
-            </td>
         </tr>
         <tr>
             <td colspan="5" class="content">
@@ -178,5 +177,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </td>
         </tr>
     </table>
+
+    <div class="area">
+        <ul class="circles">
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+        </ul>
+    </div>
+
 </body>
+
 </html>

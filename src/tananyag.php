@@ -68,12 +68,14 @@ $conn->close();
 
 <!DOCTYPE html>
 <html lang="hu">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tananyag</title>
     <link href="style.css" rel="stylesheet" />
 </head>
+
 <body>
 
     <table class="main-table">
@@ -104,14 +106,10 @@ $conn->close();
             </td>
         </tr>
         <tr>
-            <td colspan="5" class="separator">
-                <img src="./elvalaszto.png" alt="Elválasztó kép" class="full-width">
-            </td>
         </tr>
         <tr>
             <td colspan="5" class="content">
-
-                        <?php
+                <?php
                 // SQL a kurzushoz tartozó hetek és fájlok lekérdezésére
                 $sql = "SELECT hetek.het, fajlok.fajlnev, fajlok.fajltipus, fajlok.fajlid
                         FROM hetek
@@ -138,7 +136,7 @@ $conn->close();
                             echo "<ul>";
                             $current_week = $week;
                         }
-                        
+
                         echo "<br><br><br><br>";
                         echo "<li><a href='fajl_letoltes.php?fajl_id={$row['fajlid']}'>$file_name</a></li>";
                         echo "<br><br>";
@@ -150,7 +148,7 @@ $conn->close();
                 }
                 ?>
 
-                <a href="fajl_felvetel.php">Új tananyag felvitele</a>
+                <a href="fajl_felvetel.php">Új fájlok felvitele</a>
 
             </td>
         </tr>
@@ -162,14 +160,29 @@ $conn->close();
             </td>
         </tr>
     </table>
-    
+
+    <div class="area">
+        <ul class="circles">
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+        </ul>
+    </div>
+
 </body>
 
 <style>
-ul {
-    list-style-type: none;
-    text-align: left;
-}
+    ul {
+        list-style-type: none;
+        text-align: left;
+    }
 </style>
 
 </html>

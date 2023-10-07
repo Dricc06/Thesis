@@ -6,6 +6,8 @@ if (!isset($_SESSION['user_type']) || $_SESSION['user_type'] != "2") {
     exit();
 }
 
+
+
 // Adatbázis kapcsolat
 $servername = "localhost";
 $username = "Admin";
@@ -19,14 +21,14 @@ if ($conn->connect_error) {
 }
 
 // Felhasználó adatainak lekérdezése
-$username= $_SESSION['username'];
+$username = $_SESSION['username'];
 $sql = "SELECT avatar, neptun_kod FROM users WHERE neptun_kod = '$username'";
 $result = $conn->query($sql);
 
 if ($result->num_rows == 1) {
     $row = $result->fetch_assoc();
-    $avatar = $row['avatar']; 
-    $username = $row['neptun_kod']; 
+    $avatar = $row['avatar'];
+    $username = $row['neptun_kod'];
 }
 
 
@@ -46,10 +48,12 @@ if ($result_userdatas->num_rows == 1) {
     $tagozat = $row_userdatas['tagozat'];
 }
 
+
 ?>
 
 <!DOCTYPE html>
 <html lang="hu">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -58,22 +62,23 @@ if ($result_userdatas->num_rows == 1) {
     <style>
         /* Alap stílusok kifejezetten ezen oldal táblázataihoz */
         table {
-            border-collapse: collapse;
+
             margin: 10px;
         }
 
         th {
-            background-color: #FF5733;
+            background-color: #800000;
             color: white;
             padding: 10px;
-            
+
         }
 
         /* Táblázatok egymás mellé rendezése */
         .table-container {
             display: flex;
             justify-content: space-between;
-            margin: 10px 15%; /* Csökkentett margó */
+            margin: 10px 15%;
+            /* Csökkentett margó */
         }
 
         caption {
@@ -83,7 +88,6 @@ if ($result_userdatas->num_rows == 1) {
             color: #581845;
             padding: 5px;
         }
-
     </style>
 </head>
 
@@ -91,44 +95,42 @@ if ($result_userdatas->num_rows == 1) {
 
     <table class="main-table">
         <tr>
-        <td colspan="5" class="banner">
-            <div class="avatar-info">
-                <div class="avatar">
-                    <!-- Az avatar kép megjelenítése -->
-                    <img src="<?php echo $avatar; ?>" alt="Avatar" width="150" height="150">
+            <td colspan="5" class="banner">
+                <div class="avatar-info">
+                    <div class="avatar">
+                        <!-- Az avatar kép megjelenítése -->
+                        <img src="<?php echo $avatar; ?>" alt="Avatar" width="150" height="150">
 
 
-                </div>
-                <div class="user-info">
-                    <div class="neptun-kod">
-                        <!-- A Neptun kód megjelenítése -->
-                        Neptun kód: <?php echo $username; ?>
                     </div>
-                    <div class="profile-link">
-                        <a href="profil_hallgato.php">Profilom</a>
+                    <div class="user-info">
+                        <div class="neptun-kod">
+                            <!-- A Neptun kód megjelenítése -->
+                            Neptun kód: <?php echo $username; ?>
+                        </div>
+                        <div class="profile-link">
+                            <a href="profil_hallgato.php">Profilom</a>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </td>
+            </td>
         </tr>
         <tr>
             <td colspan="5" class="menu">
-                
+
                 <div class="nav-menu">
                     <div class="left-menu"><a href=fooldal_hallgato.php target="_blank">Főoldal</a></div>
+                    <div class="left-menu"><a href=kurzusok_hallgato.php target="_blank">Kurzusaim</a></div>
                     <div class="right-menu"><a href=logout.php>Kijelentkezés</a></div>
                 </div>
                 </div>
             </td>
         </tr>
         <tr>
-            <td colspan="5" class="separator">
-                <img src="./elvalaszto.png" alt="Elválasztó kép" class="full-width">
-            </td>
         </tr>
         <tr>
             <td colspan="3" class="content">
-                
+
                 <h1><?php echo $username ?></h1> <br>
 
                 <div class="table-container">
@@ -155,7 +157,7 @@ if ($result_userdatas->num_rows == 1) {
                         <tr>
                             <th><a href=avatar_modositasa.php target="_blank">Avatar módosítása!</a></th>
                         </tr>
-                       
+
 
                     </table>
 
@@ -191,11 +193,11 @@ if ($result_userdatas->num_rows == 1) {
                             <td><a href="#">Több...</a></td>
                         </tr>
 
-                        
+
                     </table>
 
 
-                </div> 
+                </div>
             </td>
         </tr>
         <tr>
@@ -206,6 +208,22 @@ if ($result_userdatas->num_rows == 1) {
             </td>
         </tr>
     </table>
-    
+
+    <div class="area">
+        <ul class="circles">
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+        </ul>
+    </div>
+
 </body>
+
 </html>

@@ -9,6 +9,8 @@ if (!isset($_SESSION['user_type']) || $_SESSION['user_type'] != "2") {
 // Ellenőrzi, hogy a látogató be van-e jelentkezve, és ha igen, akkor hallgató-e?
 // Ha nem, visszatér a bejelentkezési felületre.
 
+
+
 // Adatbázis kapcsolat
 $servername = "localhost";
 $username = "Admin";
@@ -22,7 +24,7 @@ if ($conn->connect_error) {
 }
 
 // Felhasználó adatainak lekérdezése
-$username= $_SESSION['username'];
+$username = $_SESSION['username'];
 $sql = "SELECT avatar, neptun_kod FROM users WHERE neptun_kod = '$username'";
 $result = $conn->query($sql);
 
@@ -37,59 +39,59 @@ $conn->close();
 
 <!DOCTYPE html>
 <html lang="hu">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Főoldal</title>
     <link href="style.css" rel="stylesheet" />
 </head>
+
 <body>
 
     <table class="main-table">
         <tr>
-        <td colspan="5" class="banner">
-            <div class="avatar-info">
-                <div class="avatar">
-                    <!-- Az avatar kép megjelenítése
+            <td colspan="5" class="banner">
+                <div class="avatar-info">
+                    <div class="avatar">
+                        <!-- Az avatar kép megjelenítése
                     <img src="data:image/png;base64,<?php echo base64_encode($row['avatar']); ?>" width="150" height="150"> -->
-                    <img src="<?php echo $avatar; ?>" alt="Avatar" width="150" height="150">
-                </div>
-                <div class="user-info">
-                    <div class="neptun-kod">
-                        <!-- A Neptun kód megjelenítése -->
-                        Neptun kód: <?php echo $username; ?>
+                        <img src="<?php echo $avatar; ?>" alt="Avatar" width="150" height="150">
                     </div>
-                    <div class="profile-link">
-                        <a href="profil_hallgato.php">Profilom</a>
+                    <div class="user-info">
+                        <div class="neptun-kod">
+                            <!-- A Neptun kód megjelenítése -->
+                            Neptun kód: <?php echo $username; ?>
+                        </div>
+                        <div class="profile-link">
+                            <a href="profil_hallgato.php">Profilom</a>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </td>
+            </td>
         </tr>
         <tr>
             <td colspan="5" class="menu">
-                
+
                 <div class="nav-menu">
                     <div class="left-menu"><a href=fooldal_hallgato.php target="_blank">Főoldal</a></div>
+                    <div class="left-menu"><a href=kurzusok_hallgato.php target="_blank">Kurzusaim</a></div>
                     <div class="right-menu"><a href=logout.php>Kijelentkezés</a></div>
                 </div>
                 </div>
             </td>
         </tr>
         <tr>
-            <td colspan="5" class="separator">
-                <img src="./elvalaszto.png" alt="Elválasztó kép" class="full-width">
-            </td>
         </tr>
         <tr>
             <td colspan="5" class="content">
                 <h1>Köszöntjük az E-Learning Portálon!</h1>
-                <p>Ön az Egyetem elearning portáljának címoldalán áll. A portál jelenleg hozzávetően 900, különböző képzéshez, illetve projekthez kapcsolódó kurzusnak ad otthont. 
+                <p>Ön az Egyetem elearning portáljának címoldalán áll. A portál jelenleg hozzávetően 900, különböző képzéshez, illetve projekthez kapcsolódó kurzusnak ad otthont.
                     Keressen, tallózzon szabadon a szervezeti egységenként csoportosított kurzusok között, vagy jelentkezzen be azok használatához!
                     Az első bejelentkezés módjáról <a href="https://elearning.uni-eszterhazy.hu/mod/page/view.php?id=82" target="_blank">itt olvashat.</a></p>
-                    <p>A különböző kurzusokon belül az oktatók által összeállított, játékosított teszteket is találhat, melyeket kitöltve nem csak félév végi
-                        jegyet kaphat a hallgató, hanem különféle címeket, trófeákat szerezhet meg, melyek motivációt adnak a további eredményes teljesítéshez.
-                    </p>
+                <p>A különböző kurzusokon belül az oktatók által összeállított, játékosított teszteket is találhat, melyeket kitöltve nem csak félév végi
+                    jegyet kaphat a hallgató, hanem különféle címeket, trófeákat szerezhet meg, melyek motivációt adnak a további eredményes teljesítéshez.
+                </p>
                 <h1>Jó munkát kívánunk!</h1>
 
                 <br>
@@ -100,13 +102,13 @@ $conn->close();
 
                 <p>
 
-                <a href="https://elearning.uni-eszterhazy.hu/course/index.php?categoryid=2" target="_blank"><img src="./logo_bmk.png"></img></a>
-                <a href="https://elearning.uni-eszterhazy.hu/course/index.php?categoryid=4" target="_blank"><img src="./logo_gtk.png"></img></a>
-                <a href="https://elearning.uni-eszterhazy.hu/course/index.php?categoryid=197" target="_blank"><img src="./logo_ik.png"></img></a>
-                <a href="https://elearning.uni-eszterhazy.hu/course/index.php?categoryid=5" target="_blank"><img src="./logo_pk.png"></img></a>
-                <a href="https://elearning.uni-eszterhazy.hu/course/index.php?categoryid=6" target="_blank"><img src="./logo_ttk.png"></img></a>
-                <a href="https://elearning.uni-eszterhazy.hu/course/index.php?categoryid=35" target="_blank"><img src="./logo_ec.png"></img></a>
-                <a href="https://elearning.uni-eszterhazy.hu/course/index.php?categoryid=49" target="_blank"><img src="./logo_jc.png"></img></a>
+                    <a href="https://elearning.uni-eszterhazy.hu/course/index.php?categoryid=2" target="_blank"><img src="./logo_bmk.png"></img></a>
+                    <a href="https://elearning.uni-eszterhazy.hu/course/index.php?categoryid=4" target="_blank"><img src="./logo_gtk.png"></img></a>
+                    <a href="https://elearning.uni-eszterhazy.hu/course/index.php?categoryid=197" target="_blank"><img src="./logo_ik.png"></img></a>
+                    <a href="https://elearning.uni-eszterhazy.hu/course/index.php?categoryid=5" target="_blank"><img src="./logo_pk.png"></img></a>
+                    <a href="https://elearning.uni-eszterhazy.hu/course/index.php?categoryid=6" target="_blank"><img src="./logo_ttk.png"></img></a>
+                    <a href="https://elearning.uni-eszterhazy.hu/course/index.php?categoryid=35" target="_blank"><img src="./logo_ec.png"></img></a>
+                    <a href="https://elearning.uni-eszterhazy.hu/course/index.php?categoryid=49" target="_blank"><img src="./logo_jc.png"></img></a>
 
                 </p>
 
@@ -120,6 +122,22 @@ $conn->close();
             </td>
         </tr>
     </table>
-    
+
+    <div class="area">
+        <ul class="circles">
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+        </ul>
+    </div>
+
 </body>
+
 </html>
