@@ -113,10 +113,11 @@ $conn->close();
             <td colspan="5" class="content">
                 <?php
                 // SQL a kurzushoz tartozó hetek és fájlok lekérdezésére
-                $sql = "SELECT hetek.het, fajlok.fajlnev, fajlok.fajltipus, fajlok.fajlid
-                        FROM hetek
-                        LEFT JOIN fajlok ON hetek.hetid = fajlok.hetid
-                        WHERE hetek.kurzusid = $kurzus_id";
+                $sql = "SELECT hetek.het, fajlok.fajlnev, fajlok.fajltipus, fajlok.fajlid, hetek.tesztid
+                FROM hetek
+                LEFT JOIN fajlok ON hetek.hetid = fajlok.hetid
+                LEFT JOIN tesztsor ON hetek.tesztid = tesztsor.tesztID
+                WHERE hetek.kurzusid = $kurzus_id";
 
                 // Egy változó a jelenlegi hétre
                 $current_week = null;
@@ -141,7 +142,6 @@ $conn->close();
 
                         echo "<br><br><br><br>";
                         echo "<li><a href='fajl_letoltes.php?fajl_id={$row['fajlid']}'>$file_name</a></li>";
-                        echo "<br><br>";
                     }
 
                     echo "</ul>"; // Zárd le az utolsó héthez tartozó listát
@@ -149,6 +149,10 @@ $conn->close();
                     echo "Nincs elérhető tananyag a kurzushoz.";
                 }
                 ?>
+                <a href='kitoltes.php?kurzus_nev=<?php echo urlencode($kurzus_nev); ?>'>
+                    <h2>Teszt kitöltése!</h2>
+                </a>
+
 
             </td>
         </tr>
@@ -182,6 +186,10 @@ $conn->close();
     ul {
         list-style-type: none;
         text-align: left;
+    }
+
+    h2 {
+        text-align: center;
     }
 </style>
 

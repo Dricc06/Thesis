@@ -1,8 +1,7 @@
 <?php
 session_start();
 
-if (!isset($_SESSION['user_type']) || $_SESSION['user_type'] != "1") {
-    // Ellenőrizze, hogy a felhasználó be van-e jelentkezve és oktató-e
+if (!isset($_SESSION['user_type']) || $_SESSION['user_type'] != "2") {
     header("Location: login.php");
     exit();
 }
@@ -30,36 +29,31 @@ if ($result->num_rows == 1) {
     $username = $row['neptun_kod']; // Neptun kód az adatbázisból
 }
 
+$hallgatoKod = $_SESSION['username'];
+
 // Kurzus nevének lekérése a GET paraméterből
-if (isset($_GET['nev'])) {
-    $kurzus_nev = urldecode($_GET['nev']);
+if (isset($_GET['kurzus_nev'])) {
+    $kurzus_nev = urldecode($_GET['kurzus_nev']);
 } else {
     // Ha nincs megadva kurzus név a GET paraméterként, hibaüzenetet jelenítünk meg
     echo "Hibás URL. Hiányzik a kurzus neve.";
     exit();
 }
 
-// Oktatóhoz tartozó kurzusok lekérése
-$oktatoKod = $_SESSION['username']; // Az oktató neptun kódja
+// Lekérdezés a kurzushoz tartozó hetekről
+$sqlHetek = "SELECT DISTINCT hetek.hetid, hetek.het 
+            FROM hetek 
+            LEFT JOIN tesztsor ON hetek.hetid = tesztsor.hetID
+            WHERE tesztsor.kurzusNEV = '$kurzus_nev'";
+$resultHetek = $conn->query($sqlHetek);
 
-$sql = "SELECT kurzusid FROM kurzus WHERE koktato = '$oktatoKod' AND kurzusnev = '$kurzus_nev'";
-$result = $conn->query($sql);
+// Egy üres tömb létrehozása a heteknek
+$hetek = array();
 
-if ($result->num_rows == 1) {
-    $row = $result->fetch_assoc();
-    $kurzus_id = $row['kurzusid'];
-
-    // SQL a kurzushoz tartozó hetek és fájlok lekérdezésére
-    $sql = "SELECT hetek.het, fajlok.fajlnev, fajlok.fajltipus, fajlok.fajlid
-            FROM hetek
-            LEFT JOIN fajlok ON hetek.hetid = fajlok.hetid
-            WHERE hetek.kurzusid = $kurzus_id";
-
-    $result = $conn->query($sql);
-} else {
-    // Ha a kurzus nem található az adatbázisban, hibaüzenetet jelenítünk meg
-    echo "Hibás URL. A kurzus nem található.";
-    exit();
+if ($resultHetek->num_rows > 0) {
+    while ($rowHetek = $resultHetek->fetch_assoc()) {
+        $hetek[] = $rowHetek;
+    }
 }
 
 // Adatbázis kapcsolat lezárása
@@ -72,7 +66,7 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tananyag</title>
+    <title>Teszt kitöltése</title>
     <link href="style.css" rel="stylesheet" />
 </head>
 
@@ -90,7 +84,7 @@ $conn->close();
                             Neptun kód: <?php echo $username; ?>
                         </div>
                         <div class="profile-link">
-                            <a href="profil_oktato.php">Profilom</a>
+                            <a href="profil_hallgato.php">Profilom</a>
                         </div>
                     </div>
                 </div>
@@ -99,8 +93,8 @@ $conn->close();
         <tr>
             <td colspan="5" class="menu">
                 <div class="nav-menu">
-                    <div class="left-menu"><a href=fooldal_oktato.php target="_blank">Főoldal</a></div>
-                    <div class="left-menu"><a href=kurzusok.php target="_blank">Kurzusaim</a></div>
+                    <div class="left-menu"><a href=fooldal_hallgato.php target="_blank">Főoldal</a></div>
+                    <div class="left-menu"><a href=kurzusok_hallgato.php target="_blank">Kurzusaim</a></div>
                     <div class="right-menu"><a href=logout.php>Kijelentkezés</a></div>
                 </div>
             </td>
@@ -109,47 +103,17 @@ $conn->close();
         </tr>
         <tr>
             <td colspan="5" class="content">
-                <?php
-                // SQL a kurzushoz tartozó hetek és fájlok lekérdezésére
-                $sql = "SELECT hetek.het, fajlok.fajlnev, fajlok.fajltipus, fajlok.fajlid
-                        FROM hetek
-                        LEFT JOIN fajlok ON hetek.hetid = fajlok.hetid
-                        WHERE hetek.kurzusid = $kurzus_id";
 
-                // Egy változó a jelenlegi hétre
-                $current_week = null;
-
-                if ($result->num_rows > 0) {
-                    echo "<h1>Tananyag</h1>";
-
-                    while ($row = $result->fetch_assoc()) {
-                        $week = $row['het'];
-                        $file_name = $row['fajlnev'];
-
-                        // Ellenőrizzük, hogy a héttel van-e változás
-                        if ($week != $current_week) {
-                            // Ha a héttel van változás, akkor új h2 címke
-                            if ($current_week !== null) {
-                                echo "</ul>"; // Zárd le az előző héthez tartozó listát
-                            }
-                            echo "<h2>$week</h2>";
-                            echo "<ul>";
-                            $current_week = $week;
-                        }
-
-                        echo "<br><br><br><br>";
-                        echo "<li><a href='fajl_letoltes.php?fajl_id={$row['fajlid']}'>$file_name</a></li>";
-                        echo "<br><br>";
-                    }
-
-                    echo "</ul>"; // Zárd le az utolsó héthez tartozó listát
-                } else {
-                    echo "Nincs elérhető tananyag a kurzushoz.";
-                }
-                ?>
-
-                <a href="addTest.php">Tesztsor hozzáadása</a> <br>
-                <a href="fajl_felvetel.php">Új fájlok felvitele</a>
+                <form action="kitoltes.php" method="get">
+                    <label for="het">Válassz egy hetet:</label>
+                    <select name="het" id="het">
+                        <?php foreach ($hetek as $het) : ?>
+                            <option value="<?php echo $het['hetid']; ?>"><?php echo $het['het']; ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                    <input type="hidden" name="kurzus_nev" value="<?php echo $kurzus_nev; ?>">
+                    <input type="submit" name="mehet" value="Mehet">
+                </form>
 
             </td>
         </tr>
