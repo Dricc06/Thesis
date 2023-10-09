@@ -56,8 +56,6 @@ if ($resultHetek->num_rows > 0) {
     }
 }
 
-// Adatbázis kapcsolat lezárása
-$conn->close();
 ?>
 
 <!DOCTYPE html>
@@ -104,16 +102,58 @@ $conn->close();
         <tr>
             <td colspan="5" class="content">
 
-                <form action="kitoltes.php" method="get">
-                    <label for="het">Válassz egy hetet:</label>
-                    <select name="het" id="het">
+                <form action="" method="post">
+                    <label for="selectedWeek">Válassz egy hetet:</label>
+                    <select name="selectedWeek" id="selectedWeek">
                         <?php foreach ($hetek as $het) : ?>
                             <option value="<?php echo $het['hetid']; ?>"><?php echo $het['het']; ?></option>
                         <?php endforeach; ?>
                     </select>
-                    <input type="hidden" name="kurzus_nev" value="<?php echo $kurzus_nev; ?>">
-                    <input type="submit" name="mehet" value="Mehet">
+                    <input type="submit" name="submit" value="Tovább">
                 </form>
+
+                <?php
+                if (isset($_POST['submit'])) {
+                    $selectedWeek = $_POST['selectedWeek'];
+                    $sqlKerdesek = "SELECT * FROM tesztsor WHERE hetID = '$selectedWeek'";
+                    $resultKerdesek = $conn->query($sqlKerdesek);
+
+                    if ($resultKerdesek->num_rows > 0) {
+                        echo "<h2>Kérdések a kiválasztott héthez:</h2>";
+                        echo "<table class='testTable'>";
+                        echo "<tr>
+                                <th>Kérdés</th>
+                                <th>A válasz</th>
+                                <th>B válasz</th>
+                                <th>C válasz</th>
+                                <th>D válasz</th>
+                                <th>E válasz</th>
+                                <th>F válasz</th>
+                                <th>Válaszom:</th>
+                                <th>Biztos?</th>
+                                <th>Ultra?</th>
+                            </tr>";
+                        while ($rowKerdes = $resultKerdesek->fetch_assoc()) {
+                            echo "<tr>";
+                            echo "<td>" . $rowKerdes['kerdes'] . "</td>";
+                            echo "<td>" . $rowKerdes['a'] . "</td>";
+                            echo "<td>" . $rowKerdes['b'] . "</td>";
+                            echo "<td>" . $rowKerdes['c'] . "</td>";
+                            echo "<td>" . $rowKerdes['d'] . "</td>";
+                            echo "<td>" . $rowKerdes['e'] . "</td>";
+                            echo "<td>" . $rowKerdes['f'] . "</td>";
+                            echo "</tr>";
+                        }
+                        echo "</table>";
+                    } else {
+                        echo "Nincs találat az adatbázisban a kiválasztott hétre.";
+                    }
+                }
+
+
+                // Adatbázis kapcsolat lezárása
+                $conn->close();
+                ?>
 
             </td>
         </tr>
@@ -147,6 +187,30 @@ $conn->close();
     ul {
         list-style-type: none;
         text-align: left;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: center;
+    }
+
+    .testTable {
+        border: 1px solid black;
+    }
+
+    .testTable th {
+        padding: 10px;
+        border-bottom: 2px dotted maroon;
+        border-left: 1px solid maroon;
+        background-color: #f25c54;
+        color: #ffcdb2;
+    }
+
+
+    .testTable td {
+        padding: 10px;
+        border: 1px solid maroon;
     }
 </style>
 
