@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Gép: 127.0.0.1
--- Létrehozás ideje: 2023. Okt 07. 19:34
+-- Létrehozás ideje: 2023. Okt 14. 22:57
 -- Kiszolgáló verziója: 10.4.27-MariaDB
 -- PHP verzió: 8.2.0
 
@@ -20,6 +20,28 @@ SET time_zone = "+00:00";
 --
 -- Adatbázis: `szd_jatekositas`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Tábla szerkezet ehhez a táblához `eredmenyek`
+--
+
+CREATE TABLE `eredmenyek` (
+  `eredmeny_ID` int(11) NOT NULL,
+  `het_ID` int(11) NOT NULL,
+  `kurzus_NEV` varchar(40) NOT NULL,
+  `teszt_ID` int(11) NOT NULL,
+  `neptun_KOD` varchar(6) NOT NULL,
+  `eredmeny_PONT` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- A tábla adatainak kiíratása `eredmenyek`
+--
+
+INSERT INTO `eredmenyek` (`eredmeny_ID`, `het_ID`, `kurzus_NEV`, `teszt_ID`, `neptun_KOD`, `eredmeny_PONT`) VALUES
+(1, 1, 'Teszt kurzus', 1, 'BATMAN', 20);
 
 -- --------------------------------------------------------
 
@@ -70,17 +92,20 @@ INSERT INTO `hallgatokurzusai` (`kurzusID`, `HNeptunKod`) VALUES
 CREATE TABLE `hetek` (
   `hetid` int(11) NOT NULL,
   `kurzusid` int(11) NOT NULL,
-  `het` varchar(10) NOT NULL
+  `het` varchar(10) NOT NULL,
+  `tesztid` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- A tábla adatainak kiíratása `hetek`
 --
 
-INSERT INTO `hetek` (`hetid`, `kurzusid`, `het`) VALUES
-(1, 1, '1. hét'),
-(2, 1, '2. hét'),
-(3, 1, '3. hét');
+INSERT INTO `hetek` (`hetid`, `kurzusid`, `het`, `tesztid`) VALUES
+(1, 1, '1. hét', 1),
+(2, 1, '2. hét', 2),
+(3, 1, '3. hét', 3),
+(4, 1, '4. hét', 4),
+(5, 1, '5. hét', 5);
 
 -- --------------------------------------------------------
 
@@ -122,6 +147,39 @@ CREATE TABLE `kurzus` (
 
 INSERT INTO `kurzus` (`kurzusid`, `kurzusnev`, `koktato`) VALUES
 (1, 'Teszt kurzus', 'VALAMI');
+
+-- --------------------------------------------------------
+
+--
+-- Tábla szerkezet ehhez a táblához `tesztsor`
+--
+
+CREATE TABLE `tesztsor` (
+  `tesztID` int(11) NOT NULL,
+  `kurzusNEV` varchar(40) NOT NULL,
+  `hetID` int(11) NOT NULL,
+  `kerdes` varchar(50) NOT NULL,
+  `a` varchar(30) NOT NULL,
+  `b` varchar(30) NOT NULL,
+  `c` varchar(30) NOT NULL,
+  `d` varchar(30) NOT NULL,
+  `e` varchar(30) NOT NULL,
+  `f` varchar(30) NOT NULL,
+  `helyesValasz` varchar(1) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- A tábla adatainak kiíratása `tesztsor`
+--
+
+INSERT INTO `tesztsor` (`tesztID`, `kurzusNEV`, `hetID`, `kerdes`, `a`, `b`, `c`, `d`, `e`, `f`, `helyesValasz`) VALUES
+(1, 'Teszt kurzus', 1, 'Kicsoda Bruce Wayne?', 'Batman', 'Joker', 'Scarecrow', 'Bane', 'Penguin', 'Red Hood', 'a'),
+(2, 'Teszt kurzus', 2, 'Kicsoda Cthulhu?', 'Szomszéd', 'A boltos', 'Az anyukám', 'Egy politikus', 'Ica néni a boltból', 'Elder One', 'f'),
+(3, 'Teszt kurzus', 3, 'Mi az alma?', 'zöldség', 'gyümölcs', 'halmazállapot', 'innivaló', 'gondolati dolog', 'egyik sem', 'b'),
+(4, 'Teszt kurzus', 4, 'Mi a karalábé?', 'gyümölcs', 'innivaló', 'szín', 'márka', 'zöldség', 'egyik sem', 'e'),
+(5, 'Teszt kurzus', 5, 'Milyen a diós csiga?', 'diós', 'finom', 'jó az illata', 'sokan szeretik', 'minden fenti válaszlehetőség', 'egyik sem', 'e'),
+(6, 'Teszt kurzus', 5, 'Mi igaz a fahéjas csigára?', 'Csigából készül', 'Sokan szeretik', 'Ez egy hangszer', 'Nem létező dolog', 'Egyik sem', 'Mind', 'b'),
+(7, 'Teszt kurzus', 4, 'Hogy érzed magad?', 'nagyon jól', 'jól', 'átlagosan', 'rosszul', 'nagyon rosszul', 'fáradt vagyok', 'a');
 
 -- --------------------------------------------------------
 
@@ -185,8 +243,8 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `neptun_kod`, `jelszo`, `user_type`, `avatar`) VALUES
-(1, 'BATMAN', 'alma', 2, 0x617661746172732f75736572732d31332e737667),
-(2, 'VALAMI', 'alma', 1, 0x617661746172732f75736572732d31342e737667),
+(1, 'BATMAN', 'alma', 2, 0x617661746172732f7361726b616e795f322e706e67),
+(2, 'VALAMI', 'alma', 1, 0x617661746172732f7361726b616e795f312e706e67),
 (10, 'TESZT2', 'Te$zT02', 2, NULL);
 
 -- --------------------------------------------------------
@@ -213,6 +271,16 @@ INSERT INTO `usertypes` (`utypeID`, `utypeName`) VALUES
 --
 
 --
+-- A tábla indexei `eredmenyek`
+--
+ALTER TABLE `eredmenyek`
+  ADD PRIMARY KEY (`eredmeny_ID`),
+  ADD KEY `het_ID` (`het_ID`),
+  ADD KEY `teszt_ID` (`teszt_ID`),
+  ADD KEY `neptun_KOD` (`neptun_KOD`),
+  ADD KEY `kurzus_ID` (`kurzus_NEV`);
+
+--
 -- A tábla indexei `fajlok`
 --
 ALTER TABLE `fajlok`
@@ -231,7 +299,8 @@ ALTER TABLE `hallgatokurzusai`
 --
 ALTER TABLE `hetek`
   ADD PRIMARY KEY (`hetid`),
-  ADD KEY `kurzusid` (`kurzusid`);
+  ADD KEY `kurzusid` (`kurzusid`),
+  ADD KEY `tesztid` (`tesztid`);
 
 --
 -- A tábla indexei `karok`
@@ -244,7 +313,16 @@ ALTER TABLE `karok`
 --
 ALTER TABLE `kurzus`
   ADD PRIMARY KEY (`kurzusid`),
+  ADD UNIQUE KEY `kurzusnev_2` (`kurzusnev`),
   ADD KEY `koktató` (`koktato`);
+
+--
+-- A tábla indexei `tesztsor`
+--
+ALTER TABLE `tesztsor`
+  ADD PRIMARY KEY (`tesztID`),
+  ADD KEY `hetID` (`hetID`),
+  ADD KEY `kurzusNEV` (`kurzusNEV`);
 
 --
 -- A tábla indexei `userdatas`
@@ -266,7 +344,8 @@ ALTER TABLE `userdatasoktato`
 ALTER TABLE `users`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `neptun_kod` (`neptun_kod`),
-  ADD KEY `user_type` (`user_type`) USING BTREE;
+  ADD KEY `user_type` (`user_type`) USING BTREE,
+  ADD KEY `neptun_kod_2` (`neptun_kod`);
 
 --
 -- A tábla indexei `usertypes`
@@ -280,10 +359,16 @@ ALTER TABLE `usertypes`
 --
 
 --
+-- AUTO_INCREMENT a táblához `eredmenyek`
+--
+ALTER TABLE `eredmenyek`
+  MODIFY `eredmeny_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
 -- AUTO_INCREMENT a táblához `hetek`
 --
 ALTER TABLE `hetek`
-  MODIFY `hetid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `hetid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT a táblához `kurzus`
@@ -292,8 +377,23 @@ ALTER TABLE `kurzus`
   MODIFY `kurzusid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
+-- AUTO_INCREMENT a táblához `tesztsor`
+--
+ALTER TABLE `tesztsor`
+  MODIFY `tesztID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
 -- Megkötések a kiírt táblákhoz
 --
+
+--
+-- Megkötések a táblához `eredmenyek`
+--
+ALTER TABLE `eredmenyek`
+  ADD CONSTRAINT `eredmenyek_ibfk_1` FOREIGN KEY (`het_ID`) REFERENCES `hetek` (`hetid`),
+  ADD CONSTRAINT `eredmenyek_ibfk_2` FOREIGN KEY (`kurzus_NEV`) REFERENCES `kurzus` (`kurzusnev`),
+  ADD CONSTRAINT `eredmenyek_ibfk_3` FOREIGN KEY (`neptun_KOD`) REFERENCES `userdatas` (`neptunKod`),
+  ADD CONSTRAINT `eredmenyek_ibfk_4` FOREIGN KEY (`teszt_ID`) REFERENCES `tesztsor` (`tesztID`);
 
 --
 -- Megkötések a táblához `fajlok`
@@ -313,13 +413,21 @@ ALTER TABLE `hallgatokurzusai`
 -- Megkötések a táblához `hetek`
 --
 ALTER TABLE `hetek`
-  ADD CONSTRAINT `hetek_ibfk_1` FOREIGN KEY (`kurzusid`) REFERENCES `kurzus` (`kurzusid`);
+  ADD CONSTRAINT `hetek_ibfk_1` FOREIGN KEY (`kurzusid`) REFERENCES `kurzus` (`kurzusid`),
+  ADD CONSTRAINT `hetek_ibfk_2` FOREIGN KEY (`tesztid`) REFERENCES `tesztsor` (`tesztID`);
 
 --
 -- Megkötések a táblához `kurzus`
 --
 ALTER TABLE `kurzus`
   ADD CONSTRAINT `kurzus_ibfk_1` FOREIGN KEY (`koktato`) REFERENCES `userdatasoktato` (`neptunKod`);
+
+--
+-- Megkötések a táblához `tesztsor`
+--
+ALTER TABLE `tesztsor`
+  ADD CONSTRAINT `tesztsor_ibfk_1` FOREIGN KEY (`kurzusNEV`) REFERENCES `kurzus` (`kurzusnev`),
+  ADD CONSTRAINT `tesztsor_ibfk_2` FOREIGN KEY (`hetID`) REFERENCES `hetek` (`hetid`);
 
 --
 -- Megkötések a táblához `userdatas`
