@@ -82,32 +82,50 @@ $conn->close();
         </tr>
         <tr>
             <td colspan="5" class="content">
-                <h1>Köszöntjük az E-Learning Portálon!</h1>
-                <p>Ön az Egyetem elearning portáljának címoldalán áll. A portál jelenleg hozzávetően 900, különböző képzéshez, illetve projekthez kapcsolódó kurzusnak ad otthont.
-                    Keressen, tallózzon szabadon a szervezeti egységenként csoportosított kurzusok között, vagy jelentkezzen be azok használatához!
-                    Az első bejelentkezés módjáról <a href="https://elearning.uni-eszterhazy.hu/mod/page/view.php?id=82" target="_blank">itt olvashat.</a></p>
-                <p>A különböző kurzusokon belül az oktatók által összeállított, játékosított teszteket is találhat, melyeket kitöltve nem csak félév végi
-                    jegyet kaphat a hallgató, hanem különféle címeket, trófeákat szerezhet meg, melyek motivációt adnak a további eredményes teljesítéshez.
-                </p>
-                <h1>Jó munkát kívánunk!</h1>
+                <h1>Köszöntelek a Dragon Quill oldalon!</h1>
+                <div class="main-page">
+                    <img src="./greenDragon.png" alt="Zöld sárkány" height="300px">
+
+                    <br><br><br>
+                    <p>Mi is az a Dragon Quill?
+                        <br>
+                        Ez egy olyan portál, ami egyetemi hallgatóknak kínál játékosított
+                        tesztírást, annak érdekében, hogy
+                        nagyobb motivációt kapjanak a tananyag elsajátításához. Az oldalon fellelhetők különböző
+                        jutalmazások (mint trófea-rendszer),
+                        vagy esetleg már-már RPG irányba elmenő, avatar-beállítási opció, mellyel picit mindenki
+                        személyesebbé teheti profiloldalát.
+                        <br><br>
+                        Jelentkezz be Neptun kódoddal és -jelszavaddal, böngészd az oldalt, tölts ki az Oktatód által
+                        feltöltött teszteket,
+                        szerezd meg a legtöbb pontot, az összes trófeát és kapj megajánlott jegyet!
+                        <br><br>
+                        Amennyiben nem találod azt a kurzust, amire szükséged lenne, böngéssz a lentebb elérhető kari
+                        logókra
+                        kattintva!
+                        <br><br>
+                    </p>
+
+
+                </div>
+                <h1>Jó munkát kívánok!</h1>
 
                 <br>
 
                 <h2>Kurzuskategóriák</h2>
 
-                <br><br>
+                <br>
 
-                <p>
+                <a href="https://elearning.uni-eszterhazy.hu/course/index.php?categoryid=2" target="_blank"><img src="./logo_bmk.png"></img></a>
+                <a href="https://elearning.uni-eszterhazy.hu/course/index.php?categoryid=4" target="_blank"><img src="./logo_gtk.png"></img></a>
+                <a href="https://elearning.uni-eszterhazy.hu/course/index.php?categoryid=197" target="_blank"><img src="./logo_ik.png"></img></a>
+                <a href="https://elearning.uni-eszterhazy.hu/course/index.php?categoryid=5" target="_blank"><img src="./logo_pk.png"></img></a>
+                <a href="https://elearning.uni-eszterhazy.hu/course/index.php?categoryid=6" target="_blank"><img src="./logo_ttk.png"></img></a>
+                <a href="https://elearning.uni-eszterhazy.hu/course/index.php?categoryid=35" target="_blank"><img src="./logo_ec.png"></img></a>
+                <a href="https://elearning.uni-eszterhazy.hu/course/index.php?categoryid=49" target="_blank"><img src="./logo_jc.png"></img></a>
 
-                    <a href="https://elearning.uni-eszterhazy.hu/course/index.php?categoryid=2" target="_blank"><img src="./logo_bmk.png"></img></a>
-                    <a href="https://elearning.uni-eszterhazy.hu/course/index.php?categoryid=4" target="_blank"><img src="./logo_gtk.png"></img></a>
-                    <a href="https://elearning.uni-eszterhazy.hu/course/index.php?categoryid=197" target="_blank"><img src="./logo_ik.png"></img></a>
-                    <a href="https://elearning.uni-eszterhazy.hu/course/index.php?categoryid=5" target="_blank"><img src="./logo_pk.png"></img></a>
-                    <a href="https://elearning.uni-eszterhazy.hu/course/index.php?categoryid=6" target="_blank"><img src="./logo_ttk.png"></img></a>
-                    <a href="https://elearning.uni-eszterhazy.hu/course/index.php?categoryid=35" target="_blank"><img src="./logo_ec.png"></img></a>
-                    <a href="https://elearning.uni-eszterhazy.hu/course/index.php?categoryid=49" target="_blank"><img src="./logo_jc.png"></img></a>
-
-                </p>
+                <br>
+                <i>Sárkányos képek forrása: upklyak (Freepik - Free licence)</i>
 
             </td>
         </tr>
@@ -137,5 +155,17 @@ $conn->close();
 
 </body>
 
+♦<style>
+    .main-page {
+        width: 100%;
+        overflow: hidden;
+    }
+
+    .main-page img {
+        float: right;
+        margin-right: 10px;
+        size: 100%;
+    }
+</style>
 
 </html>

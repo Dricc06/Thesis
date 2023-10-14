@@ -62,7 +62,7 @@ if ($result->num_rows > 0) {
 
 // Űrlap adatok inicializálása és hibák tömbje
 $urlap_adatok = [
-    'tesztID' => '',
+    //'tesztID' => '',
     'kurzusNEV' => '',
     'hetID' => '',
     'kerdes' => '',
@@ -81,7 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Form adatok ellenőrzése és beállítása
 
     // Teszt ID ellenőrzése
-    if (!isset($_POST['i_tesztID'])) {
+    /*if (!isset($_POST['i_tesztID'])) {
         $hibak[] = 'A teszt ID-jának megadása kötelező!';
     } else {
         $i_tesztID = $_POST['i_tesztID'];
@@ -90,7 +90,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         } else {
             $urlap_adatok['tesztID'] = $i_tesztID;
         }
-    }
+    }*/
 
     // Kurzus ID ellenőrzése
     if (!isset($_POST['i_kurzusNEV'])) {
@@ -142,10 +142,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Ha nincsenek hibák, akkor adatok beszúrása az adatbázisba
     if (empty($hibak)) {
         try {
-            $insert_query_test = 'INSERT INTO tesztsor (tesztID, kurzusNEV, hetID, kerdes, a, b, c, d, e, f, helyesValasz)
-                                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+            $insert_query_test = 'INSERT INTO tesztsor (/*tesztID,*/ kurzusNEV, hetID, kerdes, a, b, c, d, e, f, helyesValasz)
+                                VALUES (/*?,*/ ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
             $stmt_test = $conn->prepare($insert_query_test);
-            $stmt_test->bind_param("sssssssssss", $urlap_adatok['tesztID'], $urlap_adatok['kurzusNEV'], $urlap_adatok['hetID'], $urlap_adatok['kerdes'], $urlap_adatok['a'], $urlap_adatok['b'], $urlap_adatok['c'], $urlap_adatok['d'], $urlap_adatok['e'], $urlap_adatok['f'], $urlap_adatok['helyesValasz']);
+            $stmt_test->bind_param("ssssssssss", /*$urlap_adatok['tesztID'],*/ $urlap_adatok['kurzusNEV'], $urlap_adatok['hetID'], $urlap_adatok['kerdes'], $urlap_adatok['a'], $urlap_adatok['b'], $urlap_adatok['c'], $urlap_adatok['d'], $urlap_adatok['e'], $urlap_adatok['f'], $urlap_adatok['helyesValasz']);
             $stmt_test->execute();
 
             header('Location: kurzusok.php');
@@ -217,8 +217,8 @@ $conn->close();
 
                     <form action="" method="POST">
                         <br>
-                        <label for="i_tesztID">Tesztsor ID-ja:</label>
-                        <input type="number" name="i_tesztID" id="i_tesztID" value="<?= $urlap_adatok['tesztID'] ?>" min="1" required><br>
+                        <!-- <label for="i_tesztID">Tesztsor ID-ja:</label>
+                        <input type="number" name="i_tesztID" id="i_tesztID" value="<?= $urlap_adatok['tesztID'] ?>" min="1" required><br> -->
 
 
                         <!-- Legördülő lista: Kurzus neve -->
