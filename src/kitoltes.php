@@ -40,12 +40,13 @@ if (isset($_GET['kurzus_nev'])) {
     exit();
 }
 
-// Lekérdezés a kurzushoz tartozó hetekről
 $sqlHetek = "SELECT DISTINCT hetek.hetid, hetek.het 
             FROM hetek 
             LEFT JOIN tesztsor ON hetek.hetid = tesztsor.hetID
-            WHERE tesztsor.kurzusNEV = '$kurzus_nev'";
+            WHERE tesztsor.kurzusNEV = '$kurzus_nev'
+            ORDER BY hetek.het ASC";
 $resultHetek = $conn->query($sqlHetek);
+
 
 // Egy üres tömb létrehozása a heteknek
 $hetek = array();
@@ -115,24 +116,26 @@ if ($resultHetek->num_rows > 0) {
                 <?php
                 if (isset($_POST['submit'])) {
                     $selectedWeek = $_POST['selectedWeek'];
-                    $sqlKerdesek = "SELECT * FROM tesztsor WHERE hetID = '$selectedWeek'";
+
+                    // Most a kurzus nevét használom, amit az URL paraméterből olvastam ki
+                    $sqlKerdesek = "SELECT * FROM tesztsor WHERE kurzusNEV = '$kurzus_nev' AND hetID = '$selectedWeek'";
                     $resultKerdesek = $conn->query($sqlKerdesek);
 
                     if ($resultKerdesek->num_rows > 0) {
                         echo "<h2>Kérdések a kiválasztott héthez:</h2>";
                         echo "<table class='testTable'>";
                         echo "<tr>
-                                <th>Kérdés</th>
-                                <th>A válasz</th>
-                                <th>B válasz</th>
-                                <th>C válasz</th>
-                                <th>D válasz</th>
-                                <th>E válasz</th>
-                                <th>F válasz</th>
-                                <th>Válaszom:</th>
-                                <th>Biztos?</th>
-                                <th>Ultra?</th>
-                            </tr>";
+                                        <th>Kérdés</th>
+                                        <th>A válasz</th>
+                                        <th>B válasz</th>
+                                        <th>C válasz</th>
+                                        <th>D válasz</th>
+                                        <th>E válasz</th>
+                                        <th>F válasz</th>
+                                        <th>Válaszom:</th>
+                                        <th>Biztos?</th>
+                                        <th>Ultra?</th>
+                                    </tr>";
                         while ($rowKerdes = $resultKerdesek->fetch_assoc()) {
                             echo "<tr>";
                             echo "<td>" . $rowKerdes['kerdes'] . "</td>";
@@ -146,7 +149,7 @@ if ($resultHetek->num_rows > 0) {
                         }
                         echo "</table>";
                     } else {
-                        echo "Nincs találat az adatbázisban a kiválasztott hétre.";
+                        echo "Nincs találat az adatbázisban a kiválasztott kurzusra és hétre.";
                     }
                 }
 
@@ -191,12 +194,13 @@ if ($resultHetek->num_rows > 0) {
 
     table {
         width: 100%;
-        border-collapse: collapse;
         text-align: center;
     }
 
     .testTable {
         border: 1px solid black;
+
+        border-collapse: collapse;
     }
 
     .testTable th {

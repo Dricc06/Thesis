@@ -2,12 +2,10 @@
 session_start();
 
 if (!isset($_SESSION['user_type']) || $_SESSION['user_type'] != "1") {
-    // Ellenőrizze, hogy a felhasználó be van-e jelentkezve és oktató-e
     header("Location: login.php");
     exit();
 }
 
-// Adatbázis kapcsolat
 $servername = "localhost";
 $username = "Admin";
 $password = "_K*uqlR2qRzexuzw";
@@ -60,6 +58,17 @@ if ($result->num_rows > 0) {
     }
 }
 
+// Elérhető hetek lekérése az adatbázisból
+$sql = "SELECT hetID, het FROM hetek"; // Hetek lekérése
+$result = $conn->query($sql);
+
+$hetek = array();
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $hetek[$row['hetID']] = $row['het'];
+    }
+}
+
 // Űrlap adatok inicializálása és hibák tömbje
 $urlap_adatok = [
     //'tesztID' => '',
@@ -79,18 +88,6 @@ $hibak = [];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Form adatok ellenőrzése és beállítása
-
-    // Teszt ID ellenőrzése
-    /*if (!isset($_POST['i_tesztID'])) {
-        $hibak[] = 'A teszt ID-jának megadása kötelező!';
-    } else {
-        $i_tesztID = $_POST['i_tesztID'];
-        if (!filter_var($i_tesztID, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]])) {
-            $hibak[] = 'A teszt ID-jának pozitív egész számnak kell lennie!';
-        } else {
-            $urlap_adatok['tesztID'] = $i_tesztID;
-        }
-    }*/
 
     // Kurzus ID ellenőrzése
     if (!isset($_POST['i_kurzusNEV'])) {
@@ -142,10 +139,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Ha nincsenek hibák, akkor adatok beszúrása az adatbázisba
     if (empty($hibak)) {
         try {
-            $insert_query_test = 'INSERT INTO tesztsor (/*tesztID,*/ kurzusNEV, hetID, kerdes, a, b, c, d, e, f, helyesValasz)
-                                VALUES (/*?,*/ ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+            $insert_query_test = 'INSERT INTO tesztsor (kurzusNEV, hetID, kerdes, a, b, c, d, e, f, helyesValasz, nehez)
+                                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
             $stmt_test = $conn->prepare($insert_query_test);
-            $stmt_test->bind_param("ssssssssss", /*$urlap_adatok['tesztID'],*/ $urlap_adatok['kurzusNEV'], $urlap_adatok['hetID'], $urlap_adatok['kerdes'], $urlap_adatok['a'], $urlap_adatok['b'], $urlap_adatok['c'], $urlap_adatok['d'], $urlap_adatok['e'], $urlap_adatok['f'], $urlap_adatok['helyesValasz']);
+
+            $nehez = ($_POST['i_nehez'] == 'igen') ? 1 : 0;
+
+            $stmt_test->bind_param("sssssssssss", $urlap_adatok['kurzusNEV'], $urlap_adatok['hetID'], $urlap_adatok['kerdes'], $urlap_adatok['a'], $urlap_adatok['b'], $urlap_adatok['c'], $urlap_adatok['d'], $urlap_adatok['e'], $urlap_adatok['f'], $urlap_adatok['helyesValasz'], $nehez);
             $stmt_test->execute();
 
             header('Location: kurzusok.php');
@@ -237,8 +237,22 @@ $conn->close();
                             ?>
                         </select><br>
 
-                        <label for="i_hetID">Hét ID-je:</label>
-                        <input type="number" name="i_hetID" id="i_hetID" value="<?= $urlap_adatok['hetID'] ?>" min="1" required><br>
+
+                        <!-- Legördülő lista: Hetek kiválasztása -->
+                        <label for="i_hetID">Hét kiválasztása:</label>
+                        <select name="i_hetID" id="i_hetID">
+                            <option value="" disabled selected>Válasszon hetet!</option>
+                            <?php
+                            foreach ($hetek as $hetID => $het) {
+                                echo '<option value="' . $hetID . '"';
+                                if ($urlap_adatok['hetID'] == $hetID) {
+                                    echo ' selected';
+                                }
+                                echo '>' . $het . '</option>';
+                            }
+                            ?>
+                        </select>
+                        <br><br>
 
                         <label for="i_kerdes">Kérdés:</label>
                         <input type="text" name="i_kerdes" id="i_kerdes" value="<?= $urlap_adatok['kerdes'] ?>" placeholder="Kérdés:" required><br><br>
@@ -262,35 +276,86 @@ $conn->close();
                         <input type="text" name="i_f" id="i_f" value="<?= $urlap_adatok['f'] ?>" placeholder="'F' válaszlehetőség:" required><br><br>
 
                         <!-- RÁDIÓGOMBOK a helyes válaszlehetőséghez -->
-                        <b>Helyes válasz:</b><br>
-                        <input type="radio" name="i_helyesValasz" id="i_helyesValaszA" value="a" <?= ($urlap_adatok['helyesValasz'] == 'a') ? 'checked' : '' ?>>
-                        <label for="i_helyesValaszA">A</label><br>
+                        <div class="radio-label-group">
 
-                        <input type="radio" name="i_helyesValasz" id="i_helyesValaszB" value="b" <?= ($urlap_adatok['helyesValasz'] == 'b') ? 'checked' : '' ?>>
-                        <label for="i_helyesValaszB">B</label><br>
+                            <div class="formLabel">Helyes válasz:</div><br>
+                            <input type="radio" name="i_helyesValasz" id="i_helyesValaszA" value="a" <?= ($urlap_adatok['helyesValasz'] == 'a') ? 'checked' : '' ?>>
+                            <label for="i_helyesValaszA">A</label><br>
 
-                        <input type="radio" name="i_helyesValasz" id="i_helyesValaszC" value="c" <?= ($urlap_adatok['helyesValasz'] == 'c') ? 'checked' : '' ?>>
-                        <label for="i_helyesValaszC">C</label><br>
+                            <input type="radio" name="i_helyesValasz" id="i_helyesValaszB" value="b" <?= ($urlap_adatok['helyesValasz'] == 'b') ? 'checked' : '' ?>>
+                            <label for="i_helyesValaszB">B</label><br>
 
-                        <input type="radio" name="i_helyesValasz" id="i_helyesValaszD" value="d" <?= ($urlap_adatok['helyesValasz'] == 'd') ? 'checked' : '' ?>>
-                        <label for="i_helyesValaszD">D</label><br>
+                            <input type="radio" name="i_helyesValasz" id="i_helyesValaszC" value="c" <?= ($urlap_adatok['helyesValasz'] == 'c') ? 'checked' : '' ?>>
+                            <label for="i_helyesValaszC">C</label><br>
 
-                        <input type="radio" name="i_helyesValasz" id="i_helyesValaszE" value="e" <?= ($urlap_adatok['helyesValasz'] == 'e') ? 'checked' : '' ?>>
-                        <label for="i_helyesValaszE">E</label><br>
+                            <input type="radio" name="i_helyesValasz" id="i_helyesValaszD" value="d" <?= ($urlap_adatok['helyesValasz'] == 'd') ? 'checked' : '' ?>>
+                            <label for="i_helyesValaszD">D</label><br>
 
-                        <input type="radio" name="i_helyesValasz" id="i_helyesValaszF" value="f" <?= ($urlap_adatok['helyesValasz'] == 'f') ? 'checked' : '' ?>>
-                        <label for="i_helyesValaszF">F</label><br><br>
+                            <input type="radio" name="i_helyesValasz" id="i_helyesValaszE" value="e" <?= ($urlap_adatok['helyesValasz'] == 'e') ? 'checked' : '' ?>>
+                            <label for="i_helyesValaszE">E</label><br>
+
+                            <input type="radio" name="i_helyesValasz" id="i_helyesValaszF" value="f" <?= ($urlap_adatok['helyesValasz'] == 'f') ? 'checked' : '' ?>>
+                            <label for="i_helyesValaszF">F</label>
+                        </div>
+
+                        <br><br>
+
+                        <label for="i_nehez">Nehéz kérdés?</label>
+                        <select name="i_nehez" id="i_nehez">
+                            <option value="nem">Nem</option>
+                            <option value="igen">Igen</option>
+                        </select>
+
+                        <br><br>
 
                         <div class="button-container">
                             <button type="submit">Mentés!</button>
                         </div>
+                        <br>
+                        <!-- Ellenőrizd, hogy van-e kurzus a tömbben -->
+                        <?php if (!empty($oktatoKurzusok)) : ?>
+                            <a href="tananyag.php?nev=<?= urlencode($oktatoKurzusok[0]) ?>" class="vissza-link">Vissza!</a>
+                        <?php endif; ?>
+
+
                         <br><br>
 
-
-                        <?php foreach ($oktatoKurzusok as $kurzus) : ?>
-                            <a href="tananyag.php?nev=<?= urlencode($kurzus) ?>"><button type="button">Vissza!</button></a>
-                        <?php endforeach; ?>
                     </form>
+
+                    <script>
+                        document.addEventListener("DOMContentLoaded", function() {
+                            var successMessage = document.getElementById("success-message");
+                            var form = document.querySelector("form");
+
+                            form.addEventListener("submit", function(e) {
+                                e.preventDefault();
+
+                                // Adatok elküldése az űrlapról a szerverre AJAX segítségével
+                                var xhr = new XMLHttpRequest();
+
+                                xhr.open("POST", "mentes.php", true);
+
+                                xhr.onreadystatechange = function() {
+                                    if (xhr.readyState === 4 && xhr.status === 200) {
+                                        successMessage.style.display = "block";
+
+                                        setTimeout(function() {
+                                            successMessage.style.display = "none";
+                                            window.location.href = "addTest.php";
+                                        }, 3000);
+                                    }
+                                };
+
+                                // Elküldjük az űrlap adatait a szerverre
+                                var formData = new FormData(form);
+                                xhr.send(formData);
+                            });
+                        });
+                    </script>
+
+
+                    <div id="success-message" class="success-message">A kérdés mentésre került!</div>
+
 
 
             </td>
@@ -320,6 +385,116 @@ $conn->close();
     </div>
 
 </body>
+
+<style>
+    .form {
+        background-image: url('./addTest_FormBG.png');
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        text-align: center;
+    }
+
+    .button-container button[type="submit"] {
+        background-color: #FF5733;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 15px;
+        border-bottom: #800000 5px solid;
+        border-left: #800000 5px solid;
+        cursor: pointer;
+        font-weight: bold;
+        margin-right: 10px;
+        transition: background-color 0.3s;
+    }
+
+    .button-container button[type="submit"]:hover {
+        background-color: #800000;
+        border-bottom: #FF5733 5px solid;
+        border-left: #FF5733 5px solid;
+    }
+
+    .vissza-link {
+        background-color: #FF5733;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 15px;
+        border-bottom: #800000 5px solid;
+        border-right: #800000 5px solid;
+        cursor: pointer;
+        font-weight: bold;
+        margin-right: 10px;
+        transition: background-color 0.3s;
+    }
+
+    .vissza-link:hover {
+        background-color: #800000;
+        border-bottom: #FF5733 5px solid;
+        border-right: #FF5733 5px solid;
+    }
+
+    .formLabel,
+    label[for="i_kerdes"],
+    label[for="i_hetID"],
+    label[for="i_kurzusNEV"],
+    label[for="i_a"],
+    label[for="i_b"],
+    label[for="i_c"],
+    label[for="i_d"],
+    label[for="i_e"],
+    label[for="i_f"],
+    label[for="i_helyesValasz"],
+    label[for="i_nehez"] {
+        font-weight: bold;
+        color: #800000;
+    }
+
+    .radio-label-group {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .radio-label-group label {
+        margin-right: 10px;
+        text-align: center;
+    }
+
+    /* A legördülő lista testreszabása */
+    select {
+        background-color: #f0f0f0;
+        color: #333;
+        border: 1px solid #999;
+        border-radius: 5px;
+        padding: 5px;
+        width: 15%;
+    }
+
+    input[type="text"] {
+        background-color: #f0f0f0;
+        color: #333;
+        border: 1px solid #999;
+        border-radius: 5px;
+        padding: 5px;
+        width: 15%;
+
+    }
+
+    .success-message {
+        display: none;
+        background-color: #4CAF50;
+        color: white;
+        text-align: center;
+        padding: 10px;
+        position: fixed;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 999;
+    }
+</style>
 
 
 </html>
