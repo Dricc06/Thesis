@@ -75,7 +75,7 @@ if ($result_userdatas->num_rows == 1) {
 
         /* Táblázatok egymás mellé rendezése */
         .table-container {
-            display: flex;
+            display: fixed;
             justify-content: space-between;
             margin: 10px 15%;
             /* Csökkentett margó */
@@ -87,6 +87,11 @@ if ($result_userdatas->num_rows == 1) {
             text-align: left;
             color: #581845;
             padding: 5px;
+        }
+
+        .profav {
+            float: right;
+            padding-right: 35%;
         }
     </style>
 </head>
@@ -132,7 +137,7 @@ if ($result_userdatas->num_rows == 1) {
             <td colspan="3" class="content">
 
                 <h1><?php echo $username ?></h1> <br>
-
+                <div class="profav"><img src="<?php echo $avatar; ?>" alt="Avatar" width="150" height="150"></div>
                 <div class="table-container">
                     <!-- Hallgató adatai táblázat -->
                     <table>
@@ -161,8 +166,6 @@ if ($result_userdatas->num_rows == 1) {
 
                     </table>
 
-                    <img src="<?php echo $avatar; ?>" alt="Avatar" width="150" height="150">
-
 
                     <!-- Trófeák táblázat -->
                     <table>
@@ -172,25 +175,36 @@ if ($result_userdatas->num_rows == 1) {
                             <th>Trófea</th>
                             <th>Leírás</th>
                         </tr>
-                        <tr>
-                            <td>2023-09-22</td>
-                            <td>Trófea neve</td>
-                            <td>Rövid leírás...</td>
-                        </tr>
-                        <tr>
-                            <td>2023-09-22</td>
-                            <td>Trófea neve</td>
-                            <td>Rövid leírás...</td>
-                        </tr>
-                        <tr>
-                            <td>2023-09-22</td>
-                            <td>Trófea neve</td>
-                            <td>Rövid leírás...</td>
-                        </tr>
+                        <?php
+                        // Vannak trófeái?
+                        $checkTrophiesQuery = "SELECT trophies_for_students.trophID, trophies_for_students.idopont, trophies.trname, trophies.trimg, trophies_desc.trdesc
+                                                FROM trophies_for_students
+                                                INNER JOIN trophies ON trophies_for_students.trophID = trophies.trID
+                                                INNER JOIN trophies_desc ON trophies_for_students.trophID = trophies_desc.trophyID
+                                                WHERE trophies_for_students.nepKOD = '$username'";
+                        $trophiesResult = $conn->query($checkTrophiesQuery);
+
+                        if ($trophiesResult->num_rows > 0) {
+                            while ($rowTrophy = $trophiesResult->fetch_assoc()) {
+                                echo "<tr>";
+                                echo "<td>" . $rowTrophy['idopont'] . "</td>";
+                                echo '<td><img src="data:image/png;base64,' . base64_encode($rowTrophy['trimg']) . '" width="50" height="50"></td>';
+
+                                echo "<td>" . $rowTrophy['trdesc'] . "</td>";
+                                echo "</tr>";
+                            }
+                        } else {
+                            // If there are no trophies, you can display a message or handle it as needed
+                            echo "<tr>";
+                            echo "<td colspan='3'>Nincsenek trófeáid.</td>";
+                            echo "</tr>";
+                        }
+                        ?>
+
                         <tr>
                             <td></td>
                             <td></td>
-                            <td><a href="#">Több...</a></td>
+                            <td></td>
                         </tr>
 
 

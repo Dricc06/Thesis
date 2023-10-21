@@ -31,14 +31,13 @@ if ($result->num_rows == 1) {
 
 $hallgatoKod = $_SESSION['username'];
 
-// Kurzus nevének lekérése a GET paraméterből
 if (isset($_GET['kurzus_nev'])) {
     $kurzus_nev = urldecode($_GET['kurzus_nev']);
 } else {
-    // Ha nincs megadva kurzus név a GET paraméterként, hibaüzenetet jelenítünk meg
     echo "Hibás URL. Hiányzik a kurzus neve.";
     exit();
 }
+
 
 $sqlHetek = "SELECT DISTINCT hetek.hetid, hetek.het 
             FROM hetek 
@@ -110,54 +109,89 @@ if ($resultHetek->num_rows > 0) {
                             <option value="<?php echo $het['hetid']; ?>"><?php echo $het['het']; ?></option>
                         <?php endforeach; ?>
                     </select>
-                    <input type="submit" name="submit" value="Tovább">
+                    <input type="submit" name="next" value="Tovább">
                 </form>
 
                 <?php
-                if (isset($_POST['submit'])) {
+                if (isset($_POST['next'])) {
                     $selectedWeek = $_POST['selectedWeek'];
 
-                    // Most a kurzus nevét használom, amit az URL paraméterből olvastam ki
-                    $sqlKerdesek = "SELECT * FROM tesztsor WHERE kurzusNEV = '$kurzus_nev' AND hetID = '$selectedWeek'";
-                    $resultKerdesek = $conn->query($sqlKerdesek);
+                    // Küldött már be a hallgató választ az aktuális héthez?
+                    $checkSubmissionSQL = "SELECT COUNT(*) as count FROM eredmenyek WHERE het_ID = '$selectedWeek' AND neptun_KOD = '$hallgatoKod' AND kurzus_NEV ='$kurzus_nev'";
+                    $checkResult = $conn->query($checkSubmissionSQL);
+                    $submissionCount = $checkResult->fetch_assoc()['count'];
 
-                    if ($resultKerdesek->num_rows > 0) {
-                        echo "<h2>Kérdések a kiválasztott héthez:</h2>";
-                        echo "<table class='testTable'>";
-                        echo "<tr>
-                                        <th>Kérdés</th>
-                                        <th>A válasz</th>
-                                        <th>B válasz</th>
-                                        <th>C válasz</th>
-                                        <th>D válasz</th>
-                                        <th>E válasz</th>
-                                        <th>F válasz</th>
-                                        <th>Válaszom:</th>
-                                        <th>Biztos?</th>
-                                        <th>Ultra?</th>
-                                    </tr>";
-                        while ($rowKerdes = $resultKerdesek->fetch_assoc()) {
-                            echo "<tr>";
-                            echo "<td>" . $rowKerdes['kerdes'] . "</td>";
-                            echo "<td>" . $rowKerdes['a'] . "</td>";
-                            echo "<td>" . $rowKerdes['b'] . "</td>";
-                            echo "<td>" . $rowKerdes['c'] . "</td>";
-                            echo "<td>" . $rowKerdes['d'] . "</td>";
-                            echo "<td>" . $rowKerdes['e'] . "</td>";
-                            echo "<td>" . $rowKerdes['f'] . "</td>";
-                            echo "</tr>";
-                        }
-                        echo "</table>";
+                    if ($submissionCount > 0) {
+                        echo "Ehhez a héthez már küldtél be választ.";
                     } else {
-                        echo "Nincs találat az adatbázisban a kiválasztott kurzusra és hétre.";
+
+                        // Most a kurzus nevét használom, amit az URL paraméterből olvastam ki
+                        $sqlKerdesek = "SELECT * FROM tesztsor WHERE kurzusNEV = '$kurzus_nev' AND hetID = '$selectedWeek'";
+                        $resultKerdesek = $conn->query($sqlKerdesek);
+
+                        if ($resultKerdesek->num_rows > 0) {
+                            echo "<h2>Kérdések a kiválasztott héthez:</h2>";
+                            echo "<form action='pontozas.php' method='post'>";
+                            echo "<input type='hidden' name='kurzus_nev' value='" . $kurzus_nev . "'>";
+                            echo "<input type='hidden' name='selectedWeek' value='" . $selectedWeek . "'>";
+
+                            echo "<table class='testTable'>";
+                            echo "<tr>
+                                <th>Kérdés</th>
+                                <th>A válasz</th>
+                                <th>B válasz</th>
+                                <th>C válasz</th>
+                                <th>D válasz</th>
+                                <th>E válasz</th>
+                                <th>F válasz</th>
+                                <th>Válaszom:</th>
+                                <th>Extra:</th>
+                            </tr>";
+
+                            while ($rowKerdes = $resultKerdesek->fetch_assoc()) {
+                                echo "<tr>";
+                                echo "<td>" . $rowKerdes['kerdes'] . "</td>";
+                                echo "<td>" . $rowKerdes['a'] . "</td>";
+                                echo "<td>" . $rowKerdes['b'] . "</td>";
+                                echo "<td>" . $rowKerdes['c'] . "</td>";
+                                echo "<td>" . $rowKerdes['d'] . "</td>";
+                                echo "<td>" . $rowKerdes['e'] . "</td>";
+                                echo "<td>" . $rowKerdes['f'] . "</td>";
+
+                                echo "<td>
+                                <select name='valaszom[" . $rowKerdes['tesztID'] . "]' id='valaszom" . $rowKerdes['tesztID'] . "'>
+                                    <option value='a'>A</option>
+                                    <option value='b'>B</option>
+                                    <option value='c'>C</option>
+                                    <option value='d'>D</option>
+                                    <option value='e'>E</option>
+                                    <option value='f'>F</option>
+                                </select>
+                            </td>";
+
+                                echo "<td>
+                                <select name='extra[" . $rowKerdes['tesztID'] . "]' id='extra" . $rowKerdes['tesztID'] . "'>
+                                    <option value='basegame'>Alapjáték (+2/0)</option>
+                                    <option value='sure'>Biztos (+3/-1)</option>
+                                    <option value='ultra'>Ultra (+6/-6)</option>
+                                </select>
+                            </td>";
+
+                                echo "</tr>";
+                            }
+                            echo "</table>";
+
+                            echo "<input type='submit' name='submit' value='Küldés'>";
+                            echo "</form>";
+                        } else {
+                            echo "Nincs találat az adatbázisban a kiválasztott kurzusra és hétre.";
+                        }
                     }
                 }
-
 
                 // Adatbázis kapcsolat lezárása
                 $conn->close();
                 ?>
-
             </td>
         </tr>
         <tr>
