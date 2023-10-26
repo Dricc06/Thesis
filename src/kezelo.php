@@ -30,40 +30,20 @@ if ($result->num_rows == 1) {
     $username = $row['neptun_kod']; // Neptun kód az adatbázisból
 }
 
-// Kurzus nevének lekérése a GET paraméterből
-if (isset($_GET['nev'])) {
-    $kurzus_nev = urldecode($_GET['nev']);
-} else {
-    // Ha nincs megadva kurzus név a GET paraméterként, hibaüzenetet jelenítünk meg
-    echo "Hibás URL. Hiányzik a kurzus neve.";
-    exit();
-}
-
-
 // Oktatóhoz tartozó kurzusok lekérése
 $oktatoKod = $_SESSION['username']; // Az oktató neptun kódja
 
-$sql = "SELECT kurzusid FROM kurzus WHERE koktato = '$oktatoKod' AND kurzusnev = '$kurzus_nev'";
+$sql = "SELECT kurzusnev FROM kurzus WHERE koktato = '$oktatoKod'";
 $result = $conn->query($sql);
 
-if ($result->num_rows == 1) {
-    $row = $result->fetch_assoc();
-    $kurzus_id = $row['kurzusid'];
+$oktatoKurzusok = array();
 
-    // SQL a kurzushoz tartozó hetek és fájlok lekérdezésére
-    $sql = "SELECT hetek.het, fajlok.fajlnev, fajlok.fajltipus, fajlok.fajlid
-            FROM hetek
-            LEFT JOIN fajlok ON hetek.hetid = fajlok.hetid
-            WHERE hetek.kurzusid = $kurzus_id";
-
-    $result = $conn->query($sql);
-} else {
-    // Ha a kurzus nem található az adatbázisban, hibaüzenetet jelenítünk meg
-    echo "Hibás URL. A kurzus nem található.";
-    exit();
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $oktatoKurzusok[] = $row['kurzusnev'];
+    }
 }
 
-// Adatbázis kapcsolat lezárása
 $conn->close();
 ?>
 
@@ -73,7 +53,7 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tananyag</title>
+    <title>Oktatói kezelőfelület</title>
     <link href="style.css" rel="stylesheet" />
 </head>
 
@@ -111,48 +91,11 @@ $conn->close();
         </tr>
         <tr>
             <td colspan="5" class="content">
-                <?php
-                // SQL a kurzushoz tartozó hetek és fájlok lekérdezésére
-                $sql = "SELECT hetek.het, fajlok.fajlnev, fajlok.fajltipus, fajlok.fajlid
-                        FROM hetek
-                        LEFT JOIN fajlok ON hetek.hetid = fajlok.hetid
-                        WHERE hetek.kurzusid = $kurzus_id";
-
-                // Egy változó a jelenlegi hétre
-                $current_week = null;
-
-                if ($result->num_rows > 0) {
-                    echo "<h1>Tananyag</h1>";
-
-                    while ($row = $result->fetch_assoc()) {
-                        $week = $row['het'];
-                        $file_name = $row['fajlnev'];
-
-                        // Ellenőrizzük, hogy a héttel van-e változás
-                        if ($week != $current_week) {
-                            // Ha a héttel van változás, akkor új h2 címke
-                            if ($current_week !== null) {
-                                echo "</ul>"; // Zárd le az előző héthez tartozó listát
-                            }
-                            echo "<h2>$week</h2>";
-                            echo "<ul>";
-                            $current_week = $week;
-                        }
-
-                        echo "<br><br><br><br>";
-                        echo "<li><a href='fajl_letoltes.php?fajl_id={$row['fajlid']}'>$file_name</a></li>";
-                        echo "<br><br>";
-                    }
-
-                    echo "</ul>"; // Zárd le az utolsó héthez tartozó listát
-                } else {
-                    echo "Nincs elérhető tananyag a kurzushoz.";
-                }
-                ?>
-
-                <a href="addTest.php">Tesztsor hozzáadása</a> <br>
-                <a href="fajl_felvetel.php">Új fájlok felvitele</a>
-
+                <h1>Üdvözöljük az Oktatói kezelőfelületen!</h1>
+                <p>Az alábbi linkek közül kiválaszthatja az elérni kívánt funkciót:</p>
+                <a href=ranglista.php>Hallgatói eredmények, ranglista</a> <br>
+                <a href=trofea_adas.php>Trófeák kiosztása</a> <br>
+                <a href=#>Trófeás hallgatók megtekintése</a> <br>
             </td>
         </tr>
         <tr>
@@ -178,7 +121,6 @@ $conn->close();
             <li></li>
         </ul>
     </div>
-
 </body>
 
 <style>

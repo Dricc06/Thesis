@@ -63,7 +63,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             echo "A fájl már létezik.";
         } else {
             // Mozgassa a feltöltött fájlt a célkönyvtárba
-            if (move_uploaded_file($_FILES["file"]["tmp_name"], $target_file)) {
+            if (move_uploaded_file($_FILES[$file_name], $target_file)) {
                 echo "A fájl feltöltése sikeres volt.";
 
                 // A kurzus kiválasztása a felhasználói űrlapról (itt a példa a POST "kurzus" mezőjét várja)
@@ -140,6 +140,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <div class="nav-menu">
                     <div class="left-menu"><a href=fooldal_oktato.php target="_blank">Főoldal</a></div>
                     <div class="left-menu"><a href=kurzusok.php target="_blank">Kurzusaim</a></div>
+                    <div class="left-menu"><a href=kezelo.php target="_blank">Oktatói kezelőfelület</a></div>
                     <div class="right-menu"><a href=logout.php>Kijelentkezés</a></div>
                 </div>
             </td>
