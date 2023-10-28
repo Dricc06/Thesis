@@ -125,7 +125,7 @@ if ($result_userdatas->num_rows == 1) {
 
                 <div class="nav-menu">
                     <div class="left-menu"><a href=fooldal_hallgato.php target="_blank">Főoldal</a></div>
-                    <div class="left-menu"><a href=kurzusok_hallgato.php target="_blank">Kurzusaim</a></div>
+                    <div class="left-menu"><a href=kurzusok_hallgato.php target="_blank">Tesztek kitöltése</a></div>
                     <div class="right-menu"><a href=logout.php>Kijelentkezés</a></div>
                 </div>
                 </div>

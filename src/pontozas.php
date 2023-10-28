@@ -13,7 +13,6 @@ $username = "Admin";
 $password = "_K*uqlR2qRzexuzw";
 $dbname = "SZD_jatekositas";
 
-// Új adatbázis kapcsolat létrehozása az objektumorientált stílusban
 $conn = new mysqli($servername, $username, $password, $dbname);
 
 if ($conn->connect_error) {

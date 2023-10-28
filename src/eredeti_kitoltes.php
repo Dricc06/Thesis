@@ -29,39 +29,31 @@ if ($result->num_rows == 1) {
     $username = $row['neptun_kod']; // Neptun kód az adatbázisból
 }
 
+$hallgatoKod = $_SESSION['username'];
+
 // Kurzus nevének lekérése a GET paraméterből
-if (isset($_GET['nev'])) {
-    $kurzus_nev = urldecode($_GET['nev']);
+if (isset($_GET['kurzus_nev'])) {
+    $kurzus_nev = urldecode($_GET['kurzus_nev']);
 } else {
     // Ha nincs megadva kurzus név a GET paraméterként, hibaüzenetet jelenítünk meg
     echo "Hibás URL. Hiányzik a kurzus neve.";
     exit();
 }
 
-$hallgatoKod = $_SESSION['username'];
+// Lekérdezés a kurzushoz tartozó hetekről
+$sqlHetek = "SELECT DISTINCT hetek.hetid, hetek.het 
+            FROM hetek 
+            LEFT JOIN tesztsor ON hetek.hetid = tesztsor.hetID
+            WHERE tesztsor.kurzusNEV = '$kurzus_nev'";
+$resultHetek = $conn->query($sqlHetek);
 
-$sql = "SELECT kurzus.kurzusid
-        FROM kurzus 
-        LEFT JOIN hallgatoKurzusai ON hallgatoKurzusai.kurzusID = kurzus.kurzusid
-        WHERE hallgatoKurzusai.HNeptunKod = '$hallgatoKod' AND kurzus.kurzusnev = '$kurzus_nev'";
+// Egy üres tömb létrehozása a heteknek
+$hetek = array();
 
-$result = $conn->query($sql);
-
-if ($result->num_rows == 1) {
-    $row = $result->fetch_assoc();
-    $kurzus_id = $row['kurzusid'];
-
-    // SQL a kurzushoz tartozó hetek és fájlok lekérdezésére
-    $sql = "SELECT hetek.het, fajlok.fajlnev, fajlok.fajltipus, fajlok.fajlid
-            FROM hetek
-            LEFT JOIN fajlok ON hetek.hetid = fajlok.hetid
-            WHERE hetek.kurzusid = $kurzus_id";
-
-    $result = $conn->query($sql);
-} else {
-    // Ha a kurzus nem található az adatbázisban, hibaüzenetet jelenítünk meg
-    echo "Hibás URL. A kurzus nem található.";
-    exit();
+if ($resultHetek->num_rows > 0) {
+    while ($rowHetek = $resultHetek->fetch_assoc()) {
+        $hetek[] = $rowHetek;
+    }
 }
 
 // Adatbázis kapcsolat lezárása
@@ -74,7 +66,7 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tananyag</title>
+    <title>Teszt kitöltése</title>
     <link href="style.css" rel="stylesheet" />
 </head>
 
@@ -102,7 +94,7 @@ $conn->close();
             <td colspan="5" class="menu">
                 <div class="nav-menu">
                     <div class="left-menu"><a href=fooldal_hallgato.php target="_blank">Főoldal</a></div>
-                    <div class="left-menu"><a href=kurzusok_hallgato.php target="_blank">Tesztek kitöltése</a></div>
+                    <div class="left-menu"><a href=kurzusok_hallgato.php target="_blank">Kurzusaim</a></div>
                     <div class="right-menu"><a href=logout.php>Kijelentkezés</a></div>
                 </div>
             </td>
@@ -111,21 +103,17 @@ $conn->close();
         </tr>
         <tr>
             <td colspan="5" class="content">
-                <?php
-                // SQL a kurzushoz tartozó hetek és fájlok lekérdezésére
-                $sql = "SELECT hetek.het, fajlok.fajlnev, fajlok.fajltipus, fajlok.fajlid, hetek.tesztid
-                FROM hetek
-                LEFT JOIN fajlok ON hetek.hetid = fajlok.hetid
-                LEFT JOIN tesztsor ON hetek.tesztid = tesztsor.tesztID
-                WHERE hetek.kurzusid = $kurzus_id";
 
-                // Egy változó a jelenlegi hétre
-                $current_week = null;
-                ?>
-                <a href='kitoltes.php?kurzus_nev=<?php echo urlencode($kurzus_nev); ?>'>
-                    <h2>Teszt kitöltése!</h2>
-                </a>
-
+                <form action="kitoltes.php" method="get">
+                    <label for="het">Válassz egy hetet:</label>
+                    <select name="het" id="het">
+                        <?php foreach ($hetek as $het) : ?>
+                            <option value="<?php echo $het['hetid']; ?>"><?php echo $het['het']; ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                    <input type="hidden" name="kurzus_nev" value="<?php echo $kurzus_nev; ?>">
+                    <input type="submit" name="mehet" value="Mehet">
+                </form>
 
             </td>
         </tr>
@@ -159,10 +147,6 @@ $conn->close();
     ul {
         list-style-type: none;
         text-align: left;
-    }
-
-    h2 {
-        text-align: center;
     }
 </style>
 

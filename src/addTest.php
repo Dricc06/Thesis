@@ -42,22 +42,6 @@ if ($result->num_rows > 0) {
     }
 }
 
-// Kurzus nevek lekérése az adatbázisból
-$sql = "SELECT kurzusNEV FROM tesztsor";
-$result = $conn->query($sql);
-
-if (!$result) {
-    die("Adatbázis hiba: " . $conn->error);
-}
-
-$nevek = array();
-
-if ($result->num_rows > 0) {
-    while ($row = $result->fetch_assoc()) {
-        $nevek[] = $row['kurzusNEV'];
-    }
-}
-
 // Elérhető hetek lekérése az adatbázisból
 $sql = "SELECT hetID, het FROM hetek"; // Hetek lekérése
 $result = $conn->query($sql);
@@ -199,7 +183,6 @@ $conn->close();
 
                 <div class="nav-menu">
                     <div class="left-menu"><a href=fooldal_oktato.php target="_blank">Főoldal</a></div>
-                    <div class="left-menu"><a href=kurzusok.php target="_blank">Kurzusaim</a></div>
                     <div class="left-menu"><a href=kezelo.php target="_blank">Oktatói kezelőfelület</a></div>
                     <div class="right-menu"><a href=logout.php>Kijelentkezés</a></div>
                 </div>
@@ -222,18 +205,12 @@ $conn->close();
                         <input type="number" name="i_tesztID" id="i_tesztID" value="<?= $urlap_adatok['tesztID'] ?>" min="1" required><br> -->
 
 
-                        <!-- Legördülő lista: Kurzus neve -->
                         <label for="i_kurzusNEV">Kurzus kiválasztása:</label>
                         <select name="i_kurzusNEV" id="i_kurzusNEV">
                             <option value="" disabled selected>Válasszon kurzust!</option>
                             <?php
-                            $lathatoKurzusok = array(); // Tömb az eddig látott kurzusnevek tárolásához
-
-                            foreach ($nevek as $kurzusnev) :
-                                if (!in_array($kurzusnev, $lathatoKurzusok)) {
-                                    echo '<option value="' . $kurzusnev . '" ' . ($kurzusnev == $urlap_adatok['kurzusNEV'] ? 'selected' : '') . '>' . $kurzusnev . '</option>';
-                                    $lathatoKurzusok[] = $kurzusnev; // Kurzus hozzáadása az eddig látottakhoz
-                                }
+                            foreach ($oktatoKurzusok as $kurzusnev) :
+                                echo '<option value="' . $kurzusnev . '" ' . ($kurzusnev == $urlap_adatok['kurzusNEV'] ? 'selected' : '') . '>' . $kurzusnev . '</option>';
                             endforeach;
                             ?>
                         </select><br>
@@ -315,7 +292,7 @@ $conn->close();
                         <br>
                         <!-- Ellenőrizd, hogy van-e kurzus a tömbben -->
                         <?php if (!empty($oktatoKurzusok)) : ?>
-                            <a href="tananyag.php?nev=<?= urlencode($oktatoKurzusok[0]) ?>" class="vissza-link">Vissza!</a>
+                            <a href="kezelo.php" class="vissza-link">Vissza!</a>
                         <?php endif; ?>
 
 

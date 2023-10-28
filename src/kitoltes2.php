@@ -29,43 +29,33 @@ if ($result->num_rows == 1) {
     $username = $row['neptun_kod']; // Neptun kód az adatbázisból
 }
 
+$hallgatoKod = $_SESSION['username'];
+
 // Kurzus nevének lekérése a GET paraméterből
-if (isset($_GET['nev'])) {
-    $kurzus_nev = urldecode($_GET['nev']);
+if (isset($_GET['kurzus_nev'])) {
+    $kurzus_nev = urldecode($_GET['kurzus_nev']);
 } else {
     // Ha nincs megadva kurzus név a GET paraméterként, hibaüzenetet jelenítünk meg
     echo "Hibás URL. Hiányzik a kurzus neve.";
     exit();
 }
 
-$hallgatoKod = $_SESSION['username'];
+// Lekérdezés a kurzushoz tartozó hetekről
+$sqlHetek = "SELECT DISTINCT hetek.hetid, hetek.het 
+            FROM hetek 
+            LEFT JOIN tesztsor ON hetek.hetid = tesztsor.hetID
+            WHERE tesztsor.kurzusNEV = '$kurzus_nev'";
+$resultHetek = $conn->query($sqlHetek);
 
-$sql = "SELECT kurzus.kurzusid
-        FROM kurzus 
-        LEFT JOIN hallgatoKurzusai ON hallgatoKurzusai.kurzusID = kurzus.kurzusid
-        WHERE hallgatoKurzusai.HNeptunKod = '$hallgatoKod' AND kurzus.kurzusnev = '$kurzus_nev'";
+// Egy üres tömb létrehozása a heteknek
+$hetek = array();
 
-$result = $conn->query($sql);
-
-if ($result->num_rows == 1) {
-    $row = $result->fetch_assoc();
-    $kurzus_id = $row['kurzusid'];
-
-    // SQL a kurzushoz tartozó hetek és fájlok lekérdezésére
-    $sql = "SELECT hetek.het, fajlok.fajlnev, fajlok.fajltipus, fajlok.fajlid
-            FROM hetek
-            LEFT JOIN fajlok ON hetek.hetid = fajlok.hetid
-            WHERE hetek.kurzusid = $kurzus_id";
-
-    $result = $conn->query($sql);
-} else {
-    // Ha a kurzus nem található az adatbázisban, hibaüzenetet jelenítünk meg
-    echo "Hibás URL. A kurzus nem található.";
-    exit();
+if ($resultHetek->num_rows > 0) {
+    while ($rowHetek = $resultHetek->fetch_assoc()) {
+        $hetek[] = $rowHetek;
+    }
 }
 
-// Adatbázis kapcsolat lezárása
-$conn->close();
 ?>
 
 <!DOCTYPE html>
@@ -74,7 +64,7 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tananyag</title>
+    <title>Teszt kitöltése</title>
     <link href="style.css" rel="stylesheet" />
 </head>
 
@@ -111,21 +101,55 @@ $conn->close();
         </tr>
         <tr>
             <td colspan="5" class="content">
+
+                <form action="" method="post">
+                    <select name="selectedWeek" id="selectedWeek">
+                        <?php foreach ($hetek as $het) : ?>
+                            <option value="<?php echo $het['hetid']; ?>"><?php echo $het['het']; ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                    <input type="submit" name="submit" value="Tovább">
+                </form>
+
                 <?php
-                // SQL a kurzushoz tartozó hetek és fájlok lekérdezésére
-                $sql = "SELECT hetek.het, fajlok.fajlnev, fajlok.fajltipus, fajlok.fajlid, hetek.tesztid
-                FROM hetek
-                LEFT JOIN fajlok ON hetek.hetid = fajlok.hetid
-                LEFT JOIN tesztsor ON hetek.tesztid = tesztsor.tesztID
-                WHERE hetek.kurzusid = $kurzus_id";
+                if (isset($_POST['submit'])) {
+                    $selectedWeek = $_POST['selectedWeek'];
+                    $sqlKerdesek = "SELECT * FROM tesztsor WHERE hetID = '$selectedWeek'";
+                    $resultKerdesek = $conn->query($sqlKerdesek);
 
-                // Egy változó a jelenlegi hétre
-                $current_week = null;
+                    if ($resultKerdesek->num_rows > 0) {
+                        echo "<h2>Kérdések a kiválasztott héthez:</h2>";
+                        echo "<table class='testTable'>";
+                        echo "<tr>
+                                <th>Kérdés</th>
+                                <th>A válasz</th>
+                                <th>B válasz</th>
+                                <th>C válasz</th>
+                                <th>D válasz</th>
+                                <th>E válasz</th>
+                                <th>F válasz</th>
+                            </tr>";
+                        while ($rowKerdes = $resultKerdesek->fetch_assoc()) {
+                            echo "<tr>";
+                            echo "<td>" . $rowKerdes['kerdes'] . "</td>";
+                            echo "<td>" . $rowKerdes['a'] . "</td>";
+                            echo "<td>" . $rowKerdes['b'] . "</td>";
+                            echo "<td>" . $rowKerdes['c'] . "</td>";
+                            echo "<td>" . $rowKerdes['d'] . "</td>";
+                            echo "<td>" . $rowKerdes['e'] . "</td>";
+                            echo "<td>" . $rowKerdes['f'] . "</td>";
+                            echo "</tr>";
+                        }
+                        echo "</table>";
+                    } else {
+                        echo "Nincs találat az adatbázisban a kiválasztott hétre.";
+                    }
+                }
+
+
+                // Adatbázis kapcsolat lezárása
+                $conn->close();
                 ?>
-                <a href='kitoltes.php?kurzus_nev=<?php echo urlencode($kurzus_nev); ?>'>
-                    <h2>Teszt kitöltése!</h2>
-                </a>
-
 
             </td>
         </tr>
@@ -161,7 +185,22 @@ $conn->close();
         text-align: left;
     }
 
-    h2 {
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .testTable {
+        border: 1px solid black;
+    }
+
+    th,
+    td {
+        padding: 8px;
+        text-align: left;
+    }
+
+    label {
         text-align: center;
     }
 </style>

@@ -2,107 +2,84 @@
 session_start();
 
 if (!isset($_SESSION['user_type']) || $_SESSION['user_type'] != "1") {
-    // Ellenőrizze, hogy a felhasználó be van-e jelentkezve és oktató-e
     header("Location: login.php");
     exit();
 }
 
-// Felhasználó adatainak lekérdezése
-$username = $_SESSION['username'];
-
 $servername = "localhost";
-$db_username = "Admin";
-$db_password = "_K*uqlR2qRzexuzw";
+$username = "Admin";
+$password = "_K*uqlR2qRzexuzw";
 $dbname = "SZD_jatekositas";
 
-$conn = new mysqli($servername, $db_username, $db_password, $dbname);
+$conn = new mysqli($servername, $username, $password, $dbname);
 
 if ($conn->connect_error) {
     die("Kapcsolódási hiba: " . $conn->connect_error);
 }
 
+// Felhasználó adatainak lekérdezése
+$username = $_SESSION['username'];
 $sql = "SELECT avatar, neptun_kod FROM users WHERE neptun_kod = '$username'";
-$result = $conn->query($sql); // Lekérdezés végrehajtása
+$result = $conn->query($sql);
 
 if ($result->num_rows == 1) {
     $row = $result->fetch_assoc();
-    $avatar = $row['avatar']; // Avatar elérési útvonala az adatbázisból
-    $username = $row['neptun_kod']; // Neptun kód az adatbázisból
+    $avatar = $row['avatar'];
+    $username = $row['neptun_kod'];
 }
 
-// Oktatóhoz tartozó kurzusok lekérése
-$oktatoKod = $_SESSION['username']; // Az oktató neptun kódja
-
-$sql = "SELECT kurzusnev FROM kurzus WHERE koktato = '$oktatoKod'";
+// Kurzus nevek lekérése az adatbázisból
+$sql = "SELECT kurzusNEV FROM tesztsor";
 $result = $conn->query($sql);
 
-$oktatoKurzusok = array();
+if (!$result) {
+    die("Adatbázis hiba: " . $conn->error);
+}
+
+$nevek = array();
 
 if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
-        $oktatoKurzusok[] = $row['kurzusnev'];
+        $nevek[] = $row['kurzusNEV'];
     }
 }
 
-$selected_course = ""; // Változó az aktuális kurzus nevének tárolására
+// Elérhető hetek lekérése az adatbázisból
+$sql = "SELECT hetID, het FROM hetek";
+$result = $conn->query($sql);
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Ellenőrizze, hogy a fájl feltöltés sikeres volt-e
-    if (isset($_FILES["file"]) && $_FILES["file"]["error"] == 0) {
-        // Mappa, ahová a fájlokat menteni szeretnénk
-        $upload_dir = "fajlok/";
-
-        // Fájl neve
-        $file_name = basename($_FILES["file"]["name"]);
-
-        // Teljes elérési útvonal a feltöltési mappába
-        $target_file = $upload_dir . $file_name;
-
-        // Ellenőrizze, hogy a fájl már létezik-e
-        if (file_exists($target_file)) {
-            echo "A fájl már létezik.";
-        } else {
-            // Mozgassa a feltöltött fájlt a célkönyvtárba
-            if (move_uploaded_file($_FILES[$file_name], $target_file)) {
-                echo "A fájl feltöltése sikeres volt.";
-
-                // A kurzus kiválasztása a felhasználói űrlapról (itt a példa a POST "kurzus" mezőjét várja)
-                $selected_course = $_POST["kurzus"];
-
-                // Az oktató Neptun kódja a bejelentkezett oktató alapján
-                $oktatoKod = $_SESSION['username'];
-
-                // SQL lekérdezés a kurzus azonosítójának lekérdezéséhez
-                $sql = "SELECT kurzusid FROM kurzus WHERE koktato = '$oktatoKod' AND kurzusnev = '$selected_course'";
-                $result = $conn->query($sql);
-
-                if ($result->num_rows == 1) {
-                    $row = $result->fetch_assoc();
-                    $kurzus_id = $row['kurzusid'];
-
-                    // Fájl adatainak mentése az adatbázisba
-                    $file_type = $_FILES["file"]["type"];
-                    $file_size = $_FILES["file"]["size"];
-
-                    $sql = "INSERT INTO fajlok (kurzusid, fajlnev, fajltipus, fajlmeret) 
-                            VALUES ('$kurzus_id', '$file_name', '$file_type', '$file_size')";
-
-                    if ($conn->query($sql) === TRUE) {
-                        echo "Az adatok sikeresen mentve az adatbázisba.";
-                    } else {
-                        echo "Hiba az adatok mentésekor: " . $conn->error;
-                    }
-                } else {
-                    echo "Hibás URL. A kurzus nem található.";
-                }
-            } else {
-                echo "Hiba történt a fájl feltöltésekor.";
-            }
-        }
-    } else {
-        echo "Hiba történt a fájl feltöltésekor.";
+$hetek = array();
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $hetek[$row['hetID']] = $row['het'];
     }
-    $conn->close();
+}
+
+$urlap_adatok = [
+    'kurzusNEV' => '',
+    'hetID' => ''
+];
+
+$hibak = [];
+
+if (isset($_POST['submit'])) {
+    $hetID = $_POST['i_hetID'];
+    $fajlnev = $_FILES['pdf_file']['name'];
+    $fajltipus = 'pdf';
+    $fajl = $_FILES['pdf_file']['tmp_name'];
+
+    if (isset($_FILES['pdf_file']['name'])) {
+
+        $sql = "INSERT INTO fajlok (hetid, fajlnev, fajltipus, fajl) VALUES (?, ?, ?, ?)";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("isss", $hetID, $fajlnev, $fajltipus, $fajl);
+
+        if ($stmt->execute()) {
+            header("Location: success_file.php");
+        } else {
+            echo "Hiba a fájl feltöltésekor: " . $stmt->error;
+        }
+    }
 }
 ?>
 
@@ -138,36 +115,57 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <tr>
             <td colspan="5" class="menu">
                 <div class="nav-menu">
-                    <div class="left-menu"><a href=fooldal_oktato.php target="_blank">Főoldal</a></div>
-                    <div class="left-menu"><a href=kurzusok.php target="_blank">Kurzusaim</a></div>
-                    <div class="left-menu"><a href=kezelo.php target="_blank">Oktatói kezelőfelület</a></div>
-                    <div class="right-menu"><a href=logout.php>Kijelentkezés</a></div>
+                    <div class="left-menu"><a href="fooldal_oktato.php" target="_blank">Főoldal</a></div>
+                    <div class="left-menu"><a href="kurzusok.php" target="_blank">Kurzusaim</a></div>
+                    <div class="right-menu"><a href="logout.php">Kijelentkezés</a></div>
                 </div>
             </td>
         </tr>
         <tr>
-        </tr>
-        <tr>
             <td colspan="5" class="content">
                 <h1>Új fájl feltöltése</h1>
-                <form method="post" enctype="multipart/form-data">
-                    <label>Válassza ki a kurzust:</label>
-                    <select name="kurzus">
+                <form action="" method="post" enctype="multipart/form-data">
+                    <label for="i_kurzusNEV">Kurzus kiválasztása:</label>
+                    <select name="i_kurzusNEV" id="i_kurzusNEV">
+                        <option value="" disabled selected>Válasszon kurzust!</option>
                         <?php
-                        foreach ($oktatoKurzusok as $kurzus) {
-                            $selected = ($kurzus == $selected_course) ? "selected" : "";
-                            echo "<option value='" . htmlspecialchars($kurzus) . "' $selected>" . htmlspecialchars($kurzus) . "</option>";
+                        $lathatoKurzusok = array();
+
+                        foreach ($nevek as $kurzusnev) :
+                            if (!in_array($kurzusnev, $lathatoKurzusok)) {
+                                echo '<option value="' . $kurzusnev . '" ' . ($kurzusnev == $urlap_adatok['kurzusNEV'] ? 'selected' : '') . '>' . $kurzusnev . '</option>';
+                                $lathatoKurzusok[] = $kurzusnev;
+                            }
+                        endforeach;
+                        ?>
+                    </select><br>
+
+                    <label for="i_hetID">Hét kiválasztása:</label>
+                    <select name="i_hetID" id="i_hetID">
+                        <option value="" disabled selected>Válasszon hetet!</option>
+                        <?php
+                        foreach ($hetek as $hetID => $het) {
+                            echo '<option value="' . $hetID . '"';
+                            if ($urlap_adatok['hetID'] == $hetID) {
+                                echo ' selected';
+                            }
+                            echo '>' . $het . '</option>';
                         }
                         ?>
                     </select>
+                    <br><br>
+
+                    <label for="fajl">Fájl kiválasztása:</label>
+                    <div class="form-group">
+                        <input type="file" name="pdf_file" accept=".pdf" title="Upload PDF" />
+                    </div>
                     <br>
-                    <label>Fájl kiválasztása:</label>
-                    <input type="file" name="file" required>
-                    <br>
-                    <input type="submit" value="Feltöltés">
+
+                    <input type="submit" name="submit" value="Fájl feltöltése">
                 </form>
+
                 <br>
-                <a href="tananyag.php?nev=<?= urlencode($selected_course) ?>">Vissza a tananyaghoz</a>
+                <a href="kurzusok.php">Vissza a kurzusokhoz</a>
             </td>
         </tr>
         <tr>
@@ -178,22 +176,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </td>
         </tr>
     </table>
-
-    <div class="area">
-        <ul class="circles">
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-        </ul>
-    </div>
-
 </body>
 
 </html>

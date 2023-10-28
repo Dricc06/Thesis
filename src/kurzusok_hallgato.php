@@ -83,24 +83,27 @@ $conn->close();
             <td colspan="5" class="menu">
                 <div class="nav-menu">
                     <div class="left-menu"><a href=fooldal_hallgato.php target="_blank">Főoldal</a></div>
-                    <div class="left-menu"><a href=kurzusok_hallgato.php target="_blank">Kurzusaim</a></div>
+                    <div class="left-menu"><a href=kurzusok_hallgato.php target="_blank">Tesztek kitöltése</a></div>
                     <div class="right-menu"><a href=logout.php>Kijelentkezés</a></div>
                 </div>
             </td>
         </tr>
         <tr>
-            <!-- <td colspan="5" class="separator">
-                <img src="./elvalaszto.png" alt="Elválasztó kép" class="full-width">
-            </td> -->
+
         </tr>
         <tr>
             <td colspan="5" class="content">
                 <h1>Kurzusaim</h1>
                 <ul>
                     <?php foreach ($hallgatoKurzusok as $kurzus) : ?>
-                        <li><a href="tananyag_hallgato.php?nev=<?= urlencode($kurzus) ?>"><?= $kurzus ?></a></li>
+                        <li>
+                            <a href="kitoltes.php?kurzus_nev=<?= urlencode($kurzus) ?>">
+                                <?= $kurzus ?>
+                            </a>
+                        </li>
                     <?php endforeach; ?>
                 </ul>
+
             </td>
         </tr>
         <tr>

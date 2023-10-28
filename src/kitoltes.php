@@ -92,7 +92,7 @@ if ($resultHetek->num_rows > 0) {
             <td colspan="5" class="menu">
                 <div class="nav-menu">
                     <div class="left-menu"><a href=fooldal_hallgato.php target="_blank">Főoldal</a></div>
-                    <div class="left-menu"><a href=kurzusok_hallgato.php target="_blank">Kurzusaim</a></div>
+                    <div class="left-menu"><a href=kurzusok_hallgato.php target="_blank">Tesztek kitöltése</a></div>
                     <div class="right-menu"><a href=logout.php>Kijelentkezés</a></div>
                 </div>
             </td>
@@ -109,7 +109,7 @@ if ($resultHetek->num_rows > 0) {
                             <option value="<?php echo $het['hetid']; ?>"><?php echo $het['het']; ?></option>
                         <?php endforeach; ?>
                     </select>
-                    <input type="submit" name="next" value="Tovább">
+                    <input class="gomb" type="submit" name="next" value="Tovább">
                 </form>
 
                 <?php
@@ -181,7 +181,7 @@ if ($resultHetek->num_rows > 0) {
                             }
                             echo "</table>";
 
-                            echo "<input type='submit' name='submit' value='Küldés'>";
+                            echo "<input class='gomb' type='submit' name='submit' value='Küldés'>";
                             echo "</form>";
                         } else {
                             echo "Nincs találat az adatbázisban a kiválasztott kurzusra és hétre.";
@@ -249,6 +249,32 @@ if ($resultHetek->num_rows > 0) {
     .testTable td {
         padding: 10px;
         border: 1px solid maroon;
+    }
+
+    <style>h3 {
+        color: darkgreen;
+        font-size: x-large;
+    }
+
+    .gomb {
+        background-color: #FF5733;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 15px;
+        border-bottom: #800000 5px solid;
+        border-right: #800000 5px solid;
+        cursor: pointer;
+        font-weight: bold;
+        margin-right: 10px;
+        transition: background-color 0.3s;
+        margin-bottom: 20px;
+    }
+
+    .gomb:hover {
+        background-color: #800000;
+        border-bottom: #FF5733 5px solid;
+        border-right: #FF5733 5px solid;
     }
 </style>
 

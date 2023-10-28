@@ -119,7 +119,6 @@ if ($result_userdatasoktato->num_rows == 1) {
 
                 <div class="nav-menu">
                     <div class="left-menu"><a href=fooldal_oktato.php target="_blank">Főoldal</a></div>
-                    <div class="left-menu"><a href=kurzusok.php target="_blank">Kurzusaim</a></div>
                     <div class="left-menu"><a href=kezelo.php target="_blank">Oktatói kezelőfelület</a></div>
                     <div class="right-menu"><a href=logout.php>Kijelentkezés</a></div>
                 </div>
@@ -133,8 +132,9 @@ if ($result_userdatasoktato->num_rows == 1) {
 
                 <h1><?php echo $username ?></h1> <br>
 
+
+                <!-- Az oktató adatai tábla -->
                 <div class="table-container">
-                    <!-- Hallgató adatai táblázat -->
                     <table>
                         <caption>Oktató adatai</caption>
                         <tr>
@@ -157,11 +157,36 @@ if ($result_userdatasoktato->num_rows == 1) {
                         <tr>
                             <th><a href=avatar_modositasa_oktato.php target="_blank">Avatar módosítása!</a></th>
                         </tr>
-
-
                     </table>
+                    <div class="profav"><img src="<?php echo $avatar; ?>" alt="Avatar" width="150" height="150"></div>
+                </div>
 
-                    <img src="<?php echo $avatar; ?>" alt="Avatar" width="150" height="150">
+
+
+                <!-- Az oktató által oktatott kurzusok tábla -->
+                <div class="table-container">
+                    <table>
+                        <caption style="width: 150%" ;>Oktatott kurzusok</caption>
+                        <tr>
+                            <th>Kurzusnév</th>
+                        </tr>
+                        <?php
+                        $oktatoKod = $username; // Az oktató neptun kódja
+
+                        // SQL lekérdezés az oktató oktatott kurzusaira
+                        $sql = "SELECT kurzusnev FROM kurzus WHERE koktato = '$oktatoKod'";
+                        $result = $conn->query($sql);
+
+                        if ($result->num_rows > 0) {
+                            while ($row = $result->fetch_assoc()) {
+                                echo "<tr><td>" . $row["kurzusnev"] . "</td></tr>";
+                            }
+                        } else {
+                            echo "<tr><td>Nincsenek oktatott kurzusok.</td></tr>";
+                        }
+                        ?>
+                    </table>
+                </div>
 
                 </div>
             </td>

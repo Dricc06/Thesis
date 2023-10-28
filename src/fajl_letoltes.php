@@ -30,10 +30,8 @@ if (isset($_GET['fajl_id'])) {
         header("Content-Disposition: inline; filename=\"$file_name\"");
         header("Content-Length: " . strlen($file_content));
 
-        // Kiírjuk a fájl tartalmát a böngészőbe
         echo $file_content;
 
-        // Kilépés a fájl megnyitása után
         exit;
     } else {
         echo 'A fájl nem található.';
@@ -43,4 +41,3 @@ if (isset($_GET['fajl_id'])) {
 } else {
     echo 'Érvénytelen kérés.';
 }
-?>

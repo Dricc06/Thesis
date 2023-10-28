@@ -61,6 +61,16 @@ $urlap_adatok = [
     'hetID' => '',
 ];
 
+// Trófeák
+$sql = "SELECT nepKOD FROM trophies_for_students WHERE nepKOD = '$username'";
+$result = $conn->query($sql);
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $nepKOD = $row['nepKOD'];
+    }
+}
+
+
 ?>
 
 <!DOCTYPE html>
@@ -69,7 +79,7 @@ $urlap_adatok = [
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hallgatói eredmények</title>
+    <title>Heti trófeák kiosztása</title>
     <link href="style.css" rel="stylesheet" />
 </head>
 
@@ -106,7 +116,7 @@ $urlap_adatok = [
         </tr>
         <tr>
             <td colspan="5" class="content">
-                <h1>Hallgatói eredmények, ranglista</h1>
+                <h1>Heti trófeák kiosztása</h1>
 
                 <form action="" method="post">
                     <!-- Legördülő lista: Kurzus neve -->
@@ -134,11 +144,10 @@ $urlap_adatok = [
                             }
                             echo '>' . $het . '</option>';
                         }
-                        echo '<option value="egesz_szemeszter">Egész szemeszter</option>';
                         ?>
                     </select>
                     <br><br>
-                    <input type="submit" name="submit" value="Eredmények megjelenítése">
+                    <input type="submit" name="submit" value="Eredmény megjelenítése">
                 </form>
                 <br><br>
                 <?php
@@ -146,39 +155,62 @@ $urlap_adatok = [
                     $kurzus = $_POST['i_kurzusNEV'];
                     $het = $_POST['i_hetID'];
 
-                    if ($het === 'egesz_szemeszter') {
-                        // Handle the "Egész szemeszter" optio
-                        $sql = "SELECT neptun_KOD, SUM(eredmeny_PONT) AS total_points FROM eredmenyek WHERE kurzus_NEV = '$kurzus' GROUP BY neptun_KOD";
+                    $sql = "SELECT eredmeny_ID, neptun_KOD, eredmeny_PONT, bekuldes FROM eredmenyek WHERE kurzus_NEV = '$kurzus' AND het_ID = '$het' ORDER BY eredmeny_PONT DESC LIMIT 1";
+                    $result = $conn->query($sql);
 
-                        $result = $conn->query($sql);
+                    if ($result->num_rows > 0) {
+                        echo "<table class='points'>";
+                        echo "<tr><th>Hallgató Neptun kódja</th><th>Pontszám</th><th>Időpont</th><th>Megjutalmazás</th></tr>";
 
-                        if ($result->num_rows > 0) {
-                            echo "<table class='points'>";
-                            echo "<tr><th>Hallgató Neptun kódja</th><th>Összontszám</th></tr>";
-                            while ($row = $result->fetch_assoc()) {
-                                echo "<tr><td>" . $row['neptun_KOD'] . "</td><td>" . $row['total_points'] . "</td></tr>";
-                            }
-                            echo "</table>";
-                        } else {
-                            echo "Nincsenek eredmények a kiválasztott kurzusban.";
+                        while ($row = $result->fetch_assoc()) {
+                            echo "<tr>";
+                            echo "<td>" . $row['neptun_KOD'] . "</td>";
+                            echo "<td>" . $row['eredmeny_PONT'] . "</td>";
+                            echo "<td>" . $row['bekuldes'] . "</td>";
+                            echo "<td><form method='post' action=''>";
+                            echo "<input type='hidden' name='neptun_KOD' value='" . $row['neptun_KOD'] . "'>";
+                            echo "<input type='hidden' name='eredmeny_ID' value='" . $row['eredmeny_ID'] . "'>";
+                            echo "<input type='submit' name='megjutalmaz' value='Megjutalmaz'>";
+                            echo "</form></td>";
+                            echo "</tr>";
                         }
+
+                        echo "</table>";
                     } else {
-                        $sql = "SELECT neptun_KOD, eredmeny_PONT, bekuldes FROM eredmenyek WHERE kurzus_NEV = '$kurzus' AND het_ID = '$het' ORDER BY eredmeny_PONT DESC";
-
-                        $result = $conn->query($sql);
-
-                        if ($result->num_rows > 0) {
-                            echo "<table class='points'>";
-                            echo "<tr><th>Hallgató Neptun kódja</th><th>Pontszám</th><th>Beküldés ideje</th></tr>";
-                            while ($row = $result->fetch_assoc()) {
-                                echo "<tr><td>" . $row['neptun_KOD'] . "</td><td>" . $row['eredmeny_PONT'] . "</td><td>" . $row['bekuldes'] . "</td></tr>";
-                            }
-                            echo "</table>";
-                        } else {
-                            echo "Nincsenek eredmények a kiválasztott kurzus és hét kombinációhoz.";
-                        }
+                        echo "Nincsenek eredmények a kiválasztott kurzus és hét kombinációhoz.";
                     }
                 }
+
+                if (isset($_POST['megjutalmaz'])) {
+                    $nepKOD = $_POST['neptun_KOD'];
+                    $eredmeny_ID = $_POST['eredmeny_ID'];
+
+                    $checkSql = "SELECT * FROM trophies_for_students WHERE eredmeny_ID = ? AND nepKOD = ?";
+                    $checkStmt = $conn->prepare($checkSql);
+                    $checkStmt->bind_param("ss", $eredmeny_ID, $nepKOD);
+                    $checkStmt->execute();
+                    $checkResult = $checkStmt->get_result();
+
+                    if ($checkResult->num_rows == 0) {
+                        $insertSql = "INSERT INTO trophies_for_students (trophID, nepKOD, eredmeny_ID) VALUES (1, ?, ?)";
+                        $stmt = $conn->prepare($insertSql);
+                        $stmt->bind_param("ss", $nepKOD, $eredmeny_ID);
+
+                        if ($stmt->execute()) {
+                            echo "A hallgató megjutalmazva!";
+                        } else {
+                            echo "Hiba a megjutalmazás során: " . $stmt->error;
+                        }
+                    } else {
+                        // A hallgató már megkapta a trófeát
+                        echo "A hallgató már megkapta a trófeát ebben a kurzusban és héten.";
+                    }
+
+
+                    $checkStmt->close();
+                    $conn->close();
+                }
+
 
                 ?>
 
@@ -217,6 +249,7 @@ $urlap_adatok = [
         background-attachment: fixed;
         background-size: cover;
     }
+
 
     ul {
         list-style-type: none;

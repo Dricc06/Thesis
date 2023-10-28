@@ -43,6 +43,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 ?>
 
+
+
 <!DOCTYPE html>
 <html lang="hu">
 <head>
@@ -86,6 +88,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </script>
 </body>
 </html>
+
 
 <style>
 html, body {

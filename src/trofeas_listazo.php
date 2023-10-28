@@ -44,7 +44,33 @@ if ($result->num_rows > 0) {
     }
 }
 
-$conn->close();
+// Elérhető hetek lekérése az adatbázisból
+$sql = "SELECT hetID, het FROM hetek"; // Hetek lekérése
+$result = $conn->query($sql);
+
+$hetek = array();
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $hetek[$row['hetID']] = $row['het'];
+    }
+}
+
+$urlap_adatok = [
+    //'tesztID' => '',
+    'kurzusNEV' => '',
+    'hetID' => '',
+];
+
+// Trófeák
+$sql = "SELECT nepKOD FROM trophies_for_students WHERE nepKOD = '$username'";
+$result = $conn->query($sql);
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $nepKOD = $row['nepKOD'];
+    }
+}
+
+
 ?>
 
 <!DOCTYPE html>
@@ -53,7 +79,7 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Oktatói kezelőfelület</title>
+    <title>Trófeás hallgatók</title>
     <link href="style.css" rel="stylesheet" />
 </head>
 
@@ -90,13 +116,45 @@ $conn->close();
         </tr>
         <tr>
             <td colspan="5" class="content">
-                <h1>Üdvözöljük az Oktatói kezelőfelületen!</h1>
-                <p>Az alábbi linkek közül kiválaszthatja az elérni kívánt funkciót:</p>
-                <a href=addTest.php>Tesztsor hozzáadása</a> <br>
-                <a href=ranglista.php>Hallgatói eredmények, ranglista</a> <br>
-                <a href=trofea_adas_heti.php>Trófeák kiosztása - heti rangsor</a> <br>
-                <a href=trofea_adas_feleves.php>Trófeák kiosztása - egész szemeszteri rangsor</a> <br>
-                <a href=trofeas_listazo.php>Trófeás hallgatók megtekintése</a> <br>
+                <h1>Trófeával rendelkező hallgatók listája</h1>
+
+                <?php
+
+                $sql = "SELECT ts.nepKOD, ts.idopont, trophies.trname
+                        FROM trophies_for_students ts
+                        INNER JOIN trophies ON ts.trophID = trophies.trid
+                        UNION
+                        SELECT tss.nepKOD, tss.idopont, trophies.trname
+                        FROM trophies_for_students_sem tss
+                        INNER JOIN trophies ON tss.trophID = trophies.trid;";
+
+                $result = $conn->query($sql);
+
+                if ($result->num_rows > 0) {
+                    echo "<table class='list'>";
+                    echo "<tr><th>Neptun kód</th><th>Időpont</th><th>Trófea neve</th></tr>";
+
+                    while ($row = $result->fetch_assoc()) {
+                        echo "<tr>";
+                        echo "<td>" . $row['nepKOD'] . "</td>";
+                        echo "<td>" . $row['idopont'] . "</td>";
+                        echo "<td>" . $row['trname'] . "</td>";
+                        echo "</tr>";
+                    }
+
+                    echo "</table>";
+                } else {
+                    echo "Nincs találat az adatbázisban.";
+                }
+
+                echo '<form method="post" action="export.php">
+                                <input type="submit" name="export" value="Trófeás hallgatók letöltése CSV-ben">
+                            </form>';
+
+                // Kapcsolat lezárása
+                $conn->close();
+                ?>
+
             </td>
         </tr>
         <tr>
@@ -125,9 +183,44 @@ $conn->close();
 </body>
 
 <style>
+    .content {
+        background-image: url('./listBG.jpg');
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        background-size: cover;
+    }
+
+    h1 {
+        color: white;
+    }
+
     ul {
         list-style-type: none;
         text-align: left;
+    }
+
+    .list {
+        width: 80%;
+        border-collapse: collapse;
+        overflow: hidden;
+        box-shadow: 0 0 20px rgba(144, 12, 63, 0.1);
+        margin: 0 auto;
+
+    }
+
+    .list td {
+        padding: 15px;
+        background-color: rgba(255, 255, 255, 0.6);
+        color: #000080;
+        border-bottom: 1px solid white;
+    }
+
+    .list th {
+        padding: 15px;
+        border-bottom: 1px solid white;
+        color: #fff;
+        background-color: rgba(144, 12, 63, 0.8);
     }
 </style>
 

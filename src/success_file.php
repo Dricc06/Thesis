@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-if (!isset($_SESSION['user_type']) || $_SESSION['user_type'] != "2") {
+if (!isset($_SESSION['user_type']) || $_SESSION['user_type'] != "1") {
     header("Location: login.php");
     exit();
 }
@@ -29,43 +29,7 @@ if ($result->num_rows == 1) {
     $username = $row['neptun_kod']; // Neptun kód az adatbázisból
 }
 
-// Kurzus nevének lekérése a GET paraméterből
-if (isset($_GET['nev'])) {
-    $kurzus_nev = urldecode($_GET['nev']);
-} else {
-    // Ha nincs megadva kurzus név a GET paraméterként, hibaüzenetet jelenítünk meg
-    echo "Hibás URL. Hiányzik a kurzus neve.";
-    exit();
-}
-
 $hallgatoKod = $_SESSION['username'];
-
-$sql = "SELECT kurzus.kurzusid
-        FROM kurzus 
-        LEFT JOIN hallgatoKurzusai ON hallgatoKurzusai.kurzusID = kurzus.kurzusid
-        WHERE hallgatoKurzusai.HNeptunKod = '$hallgatoKod' AND kurzus.kurzusnev = '$kurzus_nev'";
-
-$result = $conn->query($sql);
-
-if ($result->num_rows == 1) {
-    $row = $result->fetch_assoc();
-    $kurzus_id = $row['kurzusid'];
-
-    // SQL a kurzushoz tartozó hetek és fájlok lekérdezésére
-    $sql = "SELECT hetek.het, fajlok.fajlnev, fajlok.fajltipus, fajlok.fajlid
-            FROM hetek
-            LEFT JOIN fajlok ON hetek.hetid = fajlok.hetid
-            WHERE hetek.kurzusid = $kurzus_id";
-
-    $result = $conn->query($sql);
-} else {
-    // Ha a kurzus nem található az adatbázisban, hibaüzenetet jelenítünk meg
-    echo "Hibás URL. A kurzus nem található.";
-    exit();
-}
-
-// Adatbázis kapcsolat lezárása
-$conn->close();
 ?>
 
 <!DOCTYPE html>
@@ -74,7 +38,7 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tananyag</title>
+    <title>Teszt kitöltése</title>
     <link href="style.css" rel="stylesheet" />
 </head>
 
@@ -102,7 +66,8 @@ $conn->close();
             <td colspan="5" class="menu">
                 <div class="nav-menu">
                     <div class="left-menu"><a href=fooldal_hallgato.php target="_blank">Főoldal</a></div>
-                    <div class="left-menu"><a href=kurzusok_hallgato.php target="_blank">Tesztek kitöltése</a></div>
+                    <div class="left-menu"><a href=kurzusok_hallgato.php target="_blank">Kurzusaim</a></div>
+                    <div class="left-menu"><a href=kezelo.php target="_blank">Oktatói kezelőfelület</a></div>
                     <div class="right-menu"><a href=logout.php>Kijelentkezés</a></div>
                 </div>
             </td>
@@ -111,23 +76,12 @@ $conn->close();
         </tr>
         <tr>
             <td colspan="5" class="content">
-                <?php
-                // SQL a kurzushoz tartozó hetek és fájlok lekérdezésére
-                $sql = "SELECT hetek.het, fajlok.fajlnev, fajlok.fajltipus, fajlok.fajlid, hetek.tesztid
-                FROM hetek
-                LEFT JOIN fajlok ON hetek.hetid = fajlok.hetid
-                LEFT JOIN tesztsor ON hetek.tesztid = tesztsor.tesztID
-                WHERE hetek.kurzusid = $kurzus_id";
-
-                // Egy változó a jelenlegi hétre
-                $current_week = null;
-                ?>
-                <a href='kitoltes.php?kurzus_nev=<?php echo urlencode($kurzus_nev); ?>'>
-                    <h2>Teszt kitöltése!</h2>
-                </a>
-
-
+                <h3>A fájl sikeresen feltöltésre került!</h3>
+                <br>
+                <a href="kurzusok.php" class="vissza-link">Vissza!</a>
+                <br><br>
             </td>
+
         </tr>
         <tr>
             <td colspan="5" class="footer">
@@ -156,13 +110,30 @@ $conn->close();
 </body>
 
 <style>
-    ul {
-        list-style-type: none;
-        text-align: left;
+    h3 {
+        color: darkgreen;
+        font-size: x-large;
     }
 
-    h2 {
-        text-align: center;
+    .vissza-link {
+        background-color: #FF5733;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 15px;
+        border-bottom: #800000 5px solid;
+        border-right: #800000 5px solid;
+        cursor: pointer;
+        font-weight: bold;
+        margin-right: 10px;
+        transition: background-color 0.3s;
+        margin-bottom: 20px;
+    }
+
+    .vissza-link:hover {
+        background-color: #800000;
+        border-bottom: #FF5733 5px solid;
+        border-right: #FF5733 5px solid;
     }
 </style>
 

@@ -124,7 +124,7 @@ $conn->close();
                 if ($result->num_rows > 0) {
                     echo "<h1>Tananyag</h1>";
 
-                    while ($row = $result->fetch_assoc()) {
+                    /* while ($row = $result->fetch_assoc()) {
                         $week = $row['het'];
                         $file_name = $row['fajlnev'];
 
@@ -137,19 +137,16 @@ $conn->close();
                             echo "<h2>$week</h2>";
                             echo "<ul>";
                             $current_week = $week;
-                        }
+                        }*/
 
-                        echo "<br><br><br><br>";
-                        echo "<li><a href='fajl_letoltes.php?fajl_id={$row['fajlid']}'>$file_name</a></li>";
-                        echo "<br><br>";
+                    while ($row = $result->fetch_assoc()) {
+                        $file_name = $row['fajlnev'];
+                        echo "<a href='fajl_letoltes.php?fajl_id={$row['fajlid']}'>$file_name</a>";
+                        echo "<br>";
                     }
-
-                    echo "</ul>"; // Zárd le az utolsó héthez tartozó listát
-                } else {
-                    echo "Nincs elérhető tananyag a kurzushoz.";
                 }
                 ?>
-
+                <br>
                 <a href="addTest.php">Tesztsor hozzáadása</a> <br>
                 <a href="fajl_felvetel.php">Új fájlok felvitele</a>
 
