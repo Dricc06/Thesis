@@ -93,6 +93,16 @@ $conn->close();
         </tr>
         <tr>
             <td colspan="5" class="content">
+                <h1>Leírás</h1>
+                Minden héthez az Oktató bizonyos számú kérdésből álló tesztsort készít, amit a Hallgatónak ki kell töltenie.<br>
+                Egy kérdéshez hat válaszlehetőség tartozik, ezek közül kell minden esetben egyet választani. <br>
+                Alapjáték esetén, ha a Hallgató helyesen válaszolt a feltett kérdésre, úgy 2 pontot kap, a helytelen válasz pedig 0 pontot ér.<br>
+                Amennyiben a Hallgató biztos a tudásában és érez magában kockázatvállalási hajlamot, úgy a pontjait felteheti tétként:
+                <li>"Biztos" lehetőség jelölése esetén a helyes válasz 3 pontot ér, rossz válasz esetén viszont levonásra kerül 1 pont</li>
+                <li>"Ultra" lehetőség jelölése esetén a helyes válasz 6 pontot ér, rossz válasz esetén viszont levonásra kerül 6 pont</li>
+                Minden hét, illetve a szemeszter végén az Oktató trófeákat oszt ki a kurzus Hallgatói között, így érdemes minél jobban felkészülni ;)
+                <h3>Kezdődjön a játék!</h3>
+                <br>
                 <h1>Kurzusaim</h1>
                 <ul>
                     <?php foreach ($hallgatoKurzusok as $kurzus) : ?>

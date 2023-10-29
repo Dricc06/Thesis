@@ -102,6 +102,11 @@ if ($resultHetek->num_rows > 0) {
         <tr>
             <td colspan="5" class="content">
 
+                <h1>Üdvözöllek a <i><?php echo $kurzus_nev ?></i> nevű kurzus tesztíró felületén!</h1>
+
+
+                <br><br>
+
                 <form action="" method="post">
                     <label for="selectedWeek">Válassz egy hetet:</label>
                     <select name="selectedWeek" id="selectedWeek">
@@ -180,7 +185,7 @@ if ($resultHetek->num_rows > 0) {
                                 echo "</tr>";
                             }
                             echo "</table>";
-
+                            echo "<br>";
                             echo "<input class='gomb' type='submit' name='submit' value='Küldés'>";
                             echo "</form>";
                         } else {
@@ -251,7 +256,7 @@ if ($resultHetek->num_rows > 0) {
         border: 1px solid maroon;
     }
 
-    <style>h3 {
+    h3 {
         color: darkgreen;
         font-size: x-large;
     }
