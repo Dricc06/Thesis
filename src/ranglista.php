@@ -148,7 +148,7 @@ $urlap_adatok = [
 
                     if ($het === 'egesz_szemeszter') {
                         // Handle the "Egész szemeszter" optio
-                        $sql = "SELECT neptun_KOD, SUM(eredmeny_PONT) AS total_points FROM eredmenyek WHERE kurzus_NEV = '$kurzus' GROUP BY neptun_KOD";
+                        $sql = "SELECT neptun_KOD, SUM(eredmeny_PONT) AS total_points FROM eredmenyek WHERE kurzus_NEV = '$kurzus' GROUP BY neptun_KOD ORDER BY eredmeny_PONT DESC";
 
                         $result = $conn->query($sql);
 
