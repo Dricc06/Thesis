@@ -106,8 +106,8 @@ if ($result->num_rows > 0) {
         <tr>
             <td colspan="5" class="menu">
                 <div class="nav-menu">
-                    <div class="left-menu"><a href=fooldal_oktato.php target="_blank">Főoldal</a></div>
-                    <div class="left-menu"><a href=kezelo.php target="_blank">Oktatói kezelőfelület</a></div>
+                    <div class="left-menu"><a href=fooldal_oktato.php target="_self">Főoldal</a></div>
+                    <div class="left-menu"><a href=kezelo.php target="_self">Oktatói kezelőfelület</a></div>
                     <div class="right-menu"><a href=logout.php>Kijelentkezés</a></div>
                 </div>
             </td>
@@ -155,21 +155,35 @@ if ($result->num_rows > 0) {
                     $kurzus = $_POST['i_kurzusNEV'];
                     $het = $_POST['i_hetID'];
 
-                    $sql = "SELECT eredmeny_ID, neptun_KOD, eredmeny_PONT, bekuldes FROM eredmenyek WHERE kurzus_NEV = '$kurzus' AND het_ID = '$het' ORDER BY eredmeny_PONT DESC LIMIT 1";
+                    $sql = "SELECT eredmeny_ID, neptun_KOD, eredmeny_PONT, bekuldes 
+                            FROM eredmenyek 
+                            WHERE kurzus_NEV = '$kurzus' AND het_ID = '$het' 
+                            ORDER BY eredmeny_PONT DESC";
+
                     $result = $conn->query($sql);
 
                     if ($result->num_rows > 0) {
                         echo "<table class='points'>";
                         echo "<tr><th>Hallgató Neptun kódja</th><th>Pontszám</th><th>Időpont</th><th>Megjutalmazás</th></tr>";
 
+                        $topStudents = array();
+                        $highestScore = 0;
+
                         while ($row = $result->fetch_assoc()) {
+                            if ($row['eredmeny_PONT'] >= $highestScore) {
+                                $highestScore = $row['eredmeny_PONT'];
+                                $topStudents[] = $row;
+                            }
+                        }
+
+                        foreach ($topStudents as $student) {
                             echo "<tr>";
-                            echo "<td>" . $row['neptun_KOD'] . "</td>";
-                            echo "<td>" . $row['eredmeny_PONT'] . "</td>";
-                            echo "<td>" . $row['bekuldes'] . "</td>";
+                            echo "<td>" . $student['neptun_KOD'] . "</td>";
+                            echo "<td>" . $student['eredmeny_PONT'] . "</td>";
+                            echo "<td>" . $student['bekuldes'] . "</td>";
                             echo "<td><form method='post' action=''>";
-                            echo "<input type='hidden' name='neptun_KOD' value='" . $row['neptun_KOD'] . "'>";
-                            echo "<input type='hidden' name='eredmeny_ID' value='" . $row['eredmeny_ID'] . "'>";
+                            echo "<input type='hidden' name='neptun_KOD' value='" . $student['neptun_KOD'] . "'>";
+                            echo "<input type='hidden' name='eredmeny_ID' value='" . $student['eredmeny_ID'] . "'>";
                             echo "<input type='submit' name='megjutalmaz' value='Megjutalmaz'>";
                             echo "</form></td>";
                             echo "</tr>";
@@ -177,7 +191,7 @@ if ($result->num_rows > 0) {
 
                         echo "</table>";
                     } else {
-                        echo "Nincsenek eredmények a kiválasztott kurzus és hét kombinációhoz.";
+                        echo "Nincsenek eredmények a kiválasztott kurzusban.";
                     }
                 }
 
@@ -206,13 +220,11 @@ if ($result->num_rows > 0) {
                         echo "A hallgató már megkapta a trófeát ebben a kurzusban és héten.";
                     }
 
-
                     $checkStmt->close();
                     $conn->close();
                 }
-
-
                 ?>
+
 
             </td>
         </tr>

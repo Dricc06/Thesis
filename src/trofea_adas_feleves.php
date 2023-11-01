@@ -106,8 +106,8 @@ if ($result->num_rows > 0) {
         <tr>
             <td colspan="5" class="menu">
                 <div class="nav-menu">
-                    <div class="left-menu"><a href=fooldal_oktato.php target="_blank">Főoldal</a></div>
-                    <div class="left-menu"><a href=kezelo.php target="_blank">Oktatói kezelőfelület</a></div>
+                    <div class="left-menu"><a href=fooldal_oktato.php target="_self">Főoldal</a></div>
+                    <div class="left-menu"><a href=kezelo.php target="_self">Oktatói kezelőfelület</a></div>
                     <div class="right-menu"><a href=logout.php>Kijelentkezés</a></div>
                 </div>
             </td>
@@ -140,13 +140,10 @@ if ($result->num_rows > 0) {
                     $kurzus = $_POST['i_kurzusNEV'];
 
                     $sql = "SELECT neptun_KOD, SUM(eredmeny_PONT) AS total_points
-                    FROM eredmenyek
-                    WHERE kurzus_NEV = '$kurzus'
-                    GROUP BY neptun_KOD
-                    ORDER BY total_points DESC
-                    LIMIT 1";
-
-
+                            FROM eredmenyek
+                            WHERE kurzus_NEV = '$kurzus'
+                            GROUP BY neptun_KOD
+                            ORDER BY total_points DESC";
 
                     $result = $conn->query($sql);
 
@@ -154,12 +151,24 @@ if ($result->num_rows > 0) {
                         echo "<table class='points'>";
                         echo "<tr><th>Hallgató Neptun kódja</th><th>Összpontszám</th><th>Megjutalmazás</th></tr>";
 
+                        $topStudents = array();
+                        $highestScore = 0;
+
                         while ($row = $result->fetch_assoc()) {
+                            if ($row['total_points'] >= $highestScore) {
+                                $highestScore = $row['total_points'];
+                                $topStudents[] = $row;
+                            } else {
+                                break; // Kilép a ciklusból, ha már nincs holtverseny
+                            }
+                        }
+
+                        foreach ($topStudents as $student) {
                             echo "<tr>";
-                            echo "<td>" . $row['neptun_KOD'] . "</td>";
-                            echo "<td>" . $row['total_points'] . "</td>";
+                            echo "<td>" . $student['neptun_KOD'] . "</td>";
+                            echo "<td>" . $student['total_points'] . "</td>";
                             echo "<td><form method='post' action=''>";
-                            echo "<input type='hidden' name='neptun_KOD' value='" . $row['neptun_KOD'] . "'>";
+                            echo "<input type='hidden' name='neptun_KOD' value='" . $student['neptun_KOD'] . "'>";
                             echo "<input type='submit' name='megjutalmaz' value='Megjutalmaz'>";
                             echo "</form></td>";
                             echo "</tr>";
@@ -170,6 +179,8 @@ if ($result->num_rows > 0) {
                         echo "Nincsenek eredmények a kiválasztott kurzusban.";
                     }
                 }
+
+
 
                 if (isset($_POST['megjutalmaz'])) {
                     $nepKOD = $_POST['neptun_KOD'];

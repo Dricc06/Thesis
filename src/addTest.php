@@ -182,8 +182,8 @@ $conn->close();
             <td colspan="5" class="menu">
 
                 <div class="nav-menu">
-                    <div class="left-menu"><a href=fooldal_oktato.php target="_blank">Főoldal</a></div>
-                    <div class="left-menu"><a href=kezelo.php target="_blank">Oktatói kezelőfelület</a></div>
+                    <div class="left-menu"><a href=fooldal_oktato.php target="_self">Főoldal</a></div>
+                    <div class="left-menu"><a href=kezelo.php target="_self">Oktatói kezelőfelület</a></div>
                     <div class="right-menu"><a href=logout.php>Kijelentkezés</a></div>
                 </div>
                 </div>

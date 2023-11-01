@@ -91,9 +91,9 @@ if ($resultHetek->num_rows > 0) {
         <tr>
             <td colspan="5" class="menu">
                 <div class="nav-menu">
-                    <div class="left-menu"><a href=fooldal_hallgato.php target="_blank">Főoldal</a></div>
-                    <div class="left-menu"><a href=kurzusok_hallgato.php target="_blank">Tesztek kitöltése</a></div>
-                    <div class="right-menu"><a href=logout.php>Kijelentkezés</a></div>
+                    <div class="left-menu"><a href=fooldal_hallgato.php target="_self">Főoldal</a></div>
+                    <div class="left-menu"><a href=kurzusok_hallgato.php target="_self">Tesztek kitöltése</a></div>
+                    <div class=" right-menu"><a href=logout.php>Kijelentkezés</a></div>
                 </div>
             </td>
         </tr>
@@ -103,8 +103,6 @@ if ($resultHetek->num_rows > 0) {
             <td colspan="5" class="content">
 
                 <h1>Üdvözöllek a <i><?php echo $kurzus_nev ?></i> nevű kurzus tesztíró felületén!</h1>
-
-
                 <br><br>
 
                 <form action="" method="post">
