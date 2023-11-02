@@ -177,11 +177,20 @@ if ($result_userdatas->num_rows == 1) {
                         </tr>
                         <?php
                         // Vannak trófeái?
-                        $checkTrophiesQuery = "SELECT trophies_for_students.trophID, trophies_for_students.idopont, trophies.trname, trophies.trimg, trophies_desc.trdesc
-                                                FROM trophies_for_students
-                                                INNER JOIN trophies ON trophies_for_students.trophID = trophies.trID
-                                                INNER JOIN trophies_desc ON trophies_for_students.trophID = trophies_desc.trophyID
-                                                WHERE trophies_for_students.nepKOD = '$username'";
+                       $checkTrophiesQuery = "SELECT trophies_for_students.trophID, trophies_for_students.idopont, trophies.trname, trophies.trimg, trophies_desc.trdesc
+                     FROM trophies_for_students
+                     INNER JOIN trophies ON trophies_for_students.trophID = trophies.trID
+                     INNER JOIN trophies_desc ON trophies_for_students.trophID = trophies_desc.trophyID
+                     WHERE trophies_for_students.nepKOD = '$username'
+                    
+                    UNION ALL
+                    
+                    SELECT trophies_for_students_sem.trophID, trophies_for_students_sem.idopont, trophies.trname, trophies.trimg, trophies_desc.trdesc
+                    FROM trophies_for_students_sem
+                    INNER JOIN trophies ON trophies_for_students_sem.trophID = trophies.trID
+                    INNER JOIN trophies_desc ON trophies_for_students_sem.trophID = trophies_desc.trophyID
+                    WHERE trophies_for_students_sem.nepKOD = '$username'";
+
                         $trophiesResult = $conn->query($checkTrophiesQuery);
 
                         if ($trophiesResult->num_rows > 0) {
