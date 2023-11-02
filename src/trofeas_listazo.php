@@ -123,7 +123,7 @@ if ($result->num_rows > 0) {
                 $sql = "SELECT ts.nepKOD, ts.idopont, trophies.trname
                         FROM trophies_for_students ts
                         INNER JOIN trophies ON ts.trophID = trophies.trid
-                        UNION
+                        UNION ALL
                         SELECT tss.nepKOD, tss.idopont, trophies.trname
                         FROM trophies_for_students_sem tss
                         INNER JOIN trophies ON tss.trophID = trophies.trid;";
