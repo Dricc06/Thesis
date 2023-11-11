@@ -147,16 +147,17 @@ $urlap_adatok = [
                     $het = $_POST['i_hetID'];
 
                     if ($het === 'egesz_szemeszter') {
-                        // Handle the "Egész szemeszter" optio
                         $sql = "SELECT neptun_KOD, SUM(eredmeny_PONT) AS total_points FROM eredmenyek WHERE kurzus_NEV = '$kurzus' GROUP BY neptun_KOD ORDER BY total_points DESC";
 
                         $result = $conn->query($sql);
 
                         if ($result->num_rows > 0) {
+                            $placement = 1;
                             echo "<table class='points'>";
-                            echo "<tr><th>Hallgató Neptun kódja</th><th>Összontszám</th></tr>";
+                            echo "<tr><th>Helyezés</th><th>Hallgató Neptun kódja</th><th>Összontszám</th></tr>";
                             while ($row = $result->fetch_assoc()) {
-                                echo "<tr><td>" . $row['neptun_KOD'] . "</td><td>" . $row['total_points'] . "</td></tr>";
+                                echo "<tr><td>" . $placement . "</td><td>" . $row['neptun_KOD'] . "</td><td>" . $row['total_points'] . "</td></tr>";
+                                $placement++;
                             }
                             echo "</table>";
                         } else {
@@ -169,17 +170,19 @@ $urlap_adatok = [
 
                         if ($result->num_rows > 0) {
                             echo "<table class='points'>";
-                            echo "<tr><th>Hallgató Neptun kódja</th><th>Pontszám</th><th>Beküldés ideje</th></tr>";
+                            echo "<tr><th>Helyezés</th><th>Hallgató Neptun kódja</th><th>Pontszám</th><th>Beküldés ideje</th></tr>";
+                            $placement = 1; // Helyezés kezdeti értéke
                             while ($row = $result->fetch_assoc()) {
-                                echo "<tr><td>" . $row['neptun_KOD'] . "</td><td>" . $row['eredmeny_PONT'] . "</td><td>" . $row['bekuldes'] . "</td></tr>";
+                                echo "<tr><td>" . $placement . "</td><td>" . $row['neptun_KOD'] . "</td><td>" . $row['eredmeny_PONT'] . "</td><td>" . $row['bekuldes'] . "</td></tr>";
+                                $placement++; // Helyezés növelése minden sor végén
                             }
                             echo "</table>";
                         } else {
                             echo "Nincsenek eredmények a kiválasztott kurzus és hét kombinációhoz.";
                         }
+
                     }
                 }
-
                 ?>
 
             </td>
