@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.0
+-- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
 -- Gép: 127.0.0.1
--- Létrehozás ideje: 2023. Okt 28. 18:11
--- Kiszolgáló verziója: 10.4.27-MariaDB
--- PHP verzió: 8.2.0
+-- Létrehozás ideje: 2024. Jan 13. 23:55
+-- Kiszolgáló verziója: 10.4.32-MariaDB
+-- PHP verzió: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -20,6 +20,17 @@ SET time_zone = "+00:00";
 --
 -- Adatbázis: `szd_jatekositas`
 --
+
+DELIMITER $$
+--
+-- Eljárások
+--
+CREATE DEFINER=`root`@`localhost` PROCEDURE `HashPassword` (INOUT `input_password` VARCHAR(255))   BEGIN
+    SET input_password = IFNULL(input_password, '');
+    SET input_password = IF(input_password <> '', SHA2(input_password, 256), input_password);
+END$$
+
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -174,7 +185,7 @@ CREATE TABLE `tesztsor` (
   `f` varchar(30) NOT NULL,
   `helyesValasz` varchar(1) NOT NULL,
   `nehez` int(1) NOT NULL
-) ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- A tábla adatainak kiíratása `tesztsor`
@@ -299,6 +310,7 @@ CREATE TABLE `userdatas` (
 
 INSERT INTO `userdatas` (`neptunKod`, `nev`, `kar`, `szak`, `tagozat`) VALUES
 ('BATMAN', 'Bat Man', 3, 'Gazdaságinformatikus BA', 'Nappali'),
+('BGV8GI', 'GA', 3, 'Gazdaságinformatikus BA', 'nappali'),
 ('TESZT2', 'Teszt Teszt', 3, 'Gazdaságinformatikus BA', 'nappali');
 
 -- --------------------------------------------------------
@@ -341,9 +353,21 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `neptun_kod`, `jelszo`, `user_type`, `avatar`) VALUES
-(1, 'BATMAN', 'alma', 2, 0x617661746172732f7361726b616e79342e706e67),
-(2, 'VALAMI', 'alma', 1, 0x617661746172732f7361726b616e795f312e706e67),
-(10, 'TESZT2', 'Te$zT02', 2, NULL);
+(1, 'BATMAN', 'ebbc3c26a34b609dc46f5c3378f96e08', 2, 0x617661746172732f7361726b616e79342e706e67),
+(2, 'VALAMI', 'ebbc3c26a34b609dc46f5c3378f96e08', 1, 0x617661746172732f7361726b616e795f312e706e67),
+(10, 'TESZT2', '326fc59231efefc38d047a25e26934b6', 2, NULL),
+(66, 'NAMTAB', '9c8be6eeb74d086ec1ad173615b11d6b', 2, NULL);
+
+--
+-- Eseményindítók `users`
+--
+DELIMITER $$
+CREATE TRIGGER `before_insert_users` BEFORE INSERT ON `users` FOR EACH ROW BEGIN
+    SET NEW.jelszo = IFNULL(NEW.jelszo, '');
+    SET NEW.jelszo = IF(NEW.jelszo <> '', MD5(NEW.jelszo), NEW.jelszo);
+END
+$$
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -513,7 +537,7 @@ ALTER TABLE `kurzus`
 -- AUTO_INCREMENT a táblához `tesztsor`
 --
 ALTER TABLE `tesztsor`
-  MODIFY `tesztID` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `tesztID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT a táblához `trophies`
@@ -570,7 +594,7 @@ ALTER TABLE `hallgatokurzusai`
 --
 ALTER TABLE `hetek`
   ADD CONSTRAINT `hetek_ibfk_1` FOREIGN KEY (`kurzusid`) REFERENCES `kurzus` (`kurzusid`),
-  ADD CONSTRAINT `hetek_ibfk_2` FOREIGN KEY (`tesztid`) REFERENCES `tesztsor` (`tesztid`);
+  ADD CONSTRAINT `hetek_ibfk_2` FOREIGN KEY (`tesztid`) REFERENCES `tesztsor` (`tesztID`);
 
 --
 -- Megkötések a táblához `kurzus`
